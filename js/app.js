@@ -1,5 +1,13 @@
-var inspect;
 (function(context){
+
+	if (navigator.serviceWorker){
+		try{
+			navigator.serviceWorker.register("progressive-web-app-sw.js");
+		}
+		catch(o3o){
+			console.warn(o3o);
+		}
+	}
 
 	// logic for recoring app
 	var recorder, backgroundNoiseLevel, backgroundAvarageTotal;
@@ -144,10 +152,8 @@ var inspect;
 			recorder.start();
 			recorder.pause();
 		});
-		//recorder.start();
 		//recorder.pause();
-
-		inspect = recorder;
+		//recorder.start();
 	}
 	//initRecording();
 
