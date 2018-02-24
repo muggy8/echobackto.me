@@ -1,5 +1,4 @@
 (function(context){
-
 	if (navigator.serviceWorker){
 		try{
 			navigator.serviceWorker.register("progressive-web-app-sw.js");
@@ -179,20 +178,6 @@
 
 	var ui = {};
 	ui.loneBtn = document.querySelector("#lone-btn");
-
-	var appVersionCall = new XMLHttpRequest();
-	appVersionCall.open("GET", "/version.json");
-	appVersionCall.addEventListener("load", function(ev){
-		console.log(ev);
-		if (appVersionCall.response){
-			var callRes = JSON.parse(appVersionCall.response);
-			var versionMeta = document.querySelector("meta[name='version']");
-			if (versionMeta.getAttribute("content") !== callRes.version) {
-				console.log("different version");
-			}
-		}
-	});
-	appVersionCall.send();
 
 	ui.initOnce = function(ev){
 		recordable = true;
