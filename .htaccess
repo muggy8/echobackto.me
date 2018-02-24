@@ -9,3 +9,7 @@ RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
 RewriteCond %{REQUEST_URI} !^/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
 RewriteRule ^/?$ "https\:\/\/echobackto\.me\/" [R=301,L]
 
+# One month for most static assets
+<filesMatch "(\/js\/|\.(css|jpg|jpeg|png|gif|ico))$">
+Header set Cache-Control "max-age=2628000, must-revalidate, public"
+</filesMatch>

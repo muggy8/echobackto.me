@@ -177,7 +177,7 @@
 		</main>
 
 		<noscript id="slow-css">
-			<link rel="stylesheet" href="./css/styles.css">
+			<link rel="stylesheet" href="/css/styles.css">
 		</noscript>
 		<script id="inline-scripts">
 			// on font ready
