@@ -1,0 +1,83 @@
+html.open-sans{
+	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+}
+button{
+	padding: 0.5em;
+    border: none;
+    border-radius: 0.325em;
+    background-color: #EEE;
+    box-shadow: 0.25em 0.25em #777;
+}
+button#lone-btn{
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	font-size: 1.125em;
+}
+p{
+	margin-top:0.5em;
+	margin-bottom:0.5em;
+}
+nav a{
+    width: 50%;
+    display: inline-block;
+    float: left;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    background-color: #777;
+    border: solid 0.5em #FFF;
+	color: #FFF;
+	border-top-left-radius: 1.5em;
+    border-top-right-radius: 1.5em;
+    border-bottom: none;
+	text-decoration: none;
+}
+nav a.viewing{
+	background-color: #DDD;
+	color: #000;
+}
+nav:after{
+	content: " ";
+	display: block;
+	clear: both;
+}
+.loading-cloak {
+	opacity: 1;
+}
+.loading-spinner:before{
+	opacity: 0;
+	animation: none;
+}
+.hidden{
+	display:none;
+}
+
+.tab-body{
+	display: none;
+	padding: 1.5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+}
+.tab-body.viewing{
+	display: block;
+	background-color: #DDD;
+}
+#recordings{
+	max-height: 64%;
+	max-height: 57.5vh;
+    overflow: auto;
+	margin-top: 1em;
+	padding-left: 0;
+}
+#recordings li{
+	display: block;
+    padding-bottom: 1.5em;
+}
+#recordings li a{
+	display: inline-block;
+    padding-right: 1em;
+}
+#recordings li audio{
+	margin-bottom: -0.65em;
+}
