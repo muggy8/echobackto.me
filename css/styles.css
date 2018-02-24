@@ -64,8 +64,6 @@ nav:after{
 	background-color: #DDD;
 }
 #recordings{
-	max-height: 64%;
-	max-height: 57.5vh;
     overflow: auto;
 	margin-top: 1em;
 	padding-left: 0;
