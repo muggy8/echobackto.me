@@ -23,6 +23,7 @@ self.addEventListener("fetch", function(ev){
 	ev.respondWith(
 		caches.open(cacheName).then(function(cache){
 			return caches.match(ev.request).then(function(cacheRes){
+				// console.log("requesting", ev.request, "cache", cacheRes)
 				if (cacheRes){
 					var cacheResExpired = cacheRes.headers.get("expires")
 						? Date.now() >=  new Date(cacheRes.headers.get("expires")).getTime()
@@ -32,6 +33,7 @@ self.addEventListener("fetch", function(ev){
 					}
 				}
 				return fetch(ev.request).then(function(fetchRes){
+					// console.log("fetched from network", fetchRes);
 					var isDataUrl = fetchRes.url.match(/^data:/)
 					var hasNoCacheHeader = fetchRes.headers.get("cache-control") && fetchRes.headers.get("cache-control").match(/no(-|\s)cache/i)
 					var networkFailure = fetchRes && fetchRes.status >= 200 && fetchRes.status < 300
@@ -40,7 +42,7 @@ self.addEventListener("fetch", function(ev){
 					if (!isDataUrl && !hasNoCacheHeader && !networkFailure && hasExpireDate){
 						cache.put(ev.request, fetchRes.clone())
 					}
-					return networkFailure ? cacheRes : fetchRes
+					return fetchRes
 				})
 			})
 
