@@ -202,7 +202,7 @@
 		<script src="./js/app.js"></script>-->
 
 		<!-- script to boot the whole app -->
-		<script src="./js/" type="text/javascript"></script>
+		<script src="/js/" type="text/javascript"></script>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
 	</body>
 </html><?php
