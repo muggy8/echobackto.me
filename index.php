@@ -78,7 +78,7 @@
 		<meta name="author" content="Muggy Ate">
 		<link rel="author" href="https://plus.google.com/+muggyate">
 
-		<link rel="manifest" href="manifest.json">
+		<link rel="manifest" href="manifest/manifest.json">
 
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-capable" content="yes">
