@@ -103,7 +103,7 @@
 			}
 		});
 
-		recorder.addEventListener( "dataAvailable", function(e){
+		recorder.addEventListener("dataAvailable", function(e){
 
 			//console.log([e.detail]);
 			var dataBlob = new Blob( [e.detail], { type: "audio/ogg" } );
@@ -179,6 +179,21 @@
 
 	var ui = {};
 	ui.loneBtn = document.querySelector("#lone-btn");
+
+	var appVersionCall = new XMLHttpRequest();
+	appVersionCall.open("GET", "/version.json");
+	appVersionCall.addEventListener("load", function(ev){
+		console.log(ev);
+		if (appVersionCall.response){
+			var callRes = JSON.parse(appVersionCall.response);
+			var versionMeta = document.querySelector("meta[name='version']");
+			if (versionMeta.getAttribute("content") !== callRes.version) {
+				console.log("different version");
+			}
+		}
+	});
+	appVersionCall.send();
+
 	ui.initOnce = function(ev){
 		recordable = true;
 		initRecording();
@@ -186,6 +201,7 @@
 		ui.loneBtn.removeEventListener("click", ui.initOnce);
 	}
 	ui.loneBtn.addEventListener("click", ui.initOnce);
+
 	ui.appReady = function(){
 		ui.loneBtn.innerHTML = "App is currently: Active";
 		var sensitivityBox = document.querySelector("#sensitivity");
