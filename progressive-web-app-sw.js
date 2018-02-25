@@ -18,10 +18,12 @@ self.addEventListener("install", function(ev){
 	)
 })
 
-var shouldCleanCash;
 self.addEventListener("fetch", function(ev){
+	// on the request to the index page we do the cache busting
 	if (ev.request.url.match(/^https:\/\/[^\/]+\/?$/i)){
-		shouldCleanCash = caches.open(cacheName).then(function(cache){
+		// figure out if we should dump the cache
+		var cache, shouldCleanCash = caches.open(cacheName).then(function(oppenedCache){
+			cache = oppenedCache
 			// request for the base HTML. we go and fetch the current version from the network if possiable
 			var versionReq = new Request("/version")
 			var remoteVersionPromise = fetch(versionReq)
@@ -31,8 +33,6 @@ self.addEventListener("fetch", function(ev){
 			return  Promise.all([remoteVersionPromise, localVersionPromise]).then(function(versions){
 				var remote = versions[0]
 				var local = versions[1]
-
-				console.log(versions)
 
 				// if the remote failed to fetch we are running off the cache so lets not replace it
 				if (remote.status >= 400 || remote.status < 200){
@@ -52,38 +52,52 @@ self.addEventListener("fetch", function(ev){
 					}
 					return false
 				})
-			}).then(function(res){
-				console.log(res)
-				return res
 			})
 		})
-	}
-	ev.respondWith(
-		caches.open(cacheName).then(function(cache){
-			return caches.match(ev.request).then(function(cacheRes){
-				// console.log("requesting", ev.request, "cache", cacheRes)
-				if (cacheRes){
-					var cacheResExpired = cacheRes.headers.get("expires")
-						? Date.now() >=  new Date(cacheRes.headers.get("expires")).getTime()
-						: false
-					if (!cacheResExpired){
-						return cacheRes
-					}
-				}
-				return fetch(ev.request).then(function(fetchRes){
-					// console.log("fetched from network", fetchRes);
-					var isDataUrl = fetchRes.url.match(/^data:/)
-					var hasNoCacheHeader = fetchRes.headers.get("cache-control") && fetchRes.headers.get("cache-control").match(/no(-|\s)cache/i)
-					var networkFailure = fetchRes && fetchRes.status >= 200 && fetchRes.status < 300
-					var hasExpireDate = fetchRes.headers.get("expires")
 
-					if (!isDataUrl && !hasNoCacheHeader && !networkFailure && hasExpireDate){
-						cache.put(ev.request, fetchRes.clone())
-					}
-					return fetchRes
+		// based on if we should or shouldn't dump the cache, we respond accordingly
+		ev.respondWith(shouldCleanCash.then(function(dumpCache){
+			if (dumpCache){
+				return caches.delete(cacheName).then(function(){
+					return fetch(ev.request).then(function(fetched){
+						cache.put(ev.request, fetched.clone())
+						return fetched
+					})
 				})
-			})
+			}
+			else{
+				return caches.match(ev.request)
+			}
+		}))
+	}
+	// any requests to aything that's not the index, we do cache first with network fallback usage since any requests to the index page will result in dumping the cache if an update is requred and since requests to the index is always the first request, these can be safe to do cache first repsonding
+	else {
+		ev.respondWith(
+			caches.open(cacheName).then(function(cache){
+				return caches.match(ev.request).then(function(cacheRes){
+					if (cacheRes){
+						var cacheResExpired = cacheRes.headers.get("expires")
+							? Date.now() >=  new Date(cacheRes.headers.get("expires")).getTime()
+							: false
+						if (!cacheResExpired){
+							return cacheRes
+						}
+					}
+					return fetch(ev.request).then(function(fetchRes){
+						// console.log("fetched from network", fetchRes);
+						var isDataUrl = fetchRes.url.match(/^data:/)
+						var hasNoCacheHeader = fetchRes.headers.get("cache-control") && fetchRes.headers.get("cache-control").match(/no(-|\s)cache/i)
+						var networkFailure = fetchRes && fetchRes.status >= 200 && fetchRes.status < 300
+						var hasExpireDate = fetchRes.headers.get("expires")
 
-		})
-	)
+						if (!isDataUrl && !hasNoCacheHeader && !networkFailure && hasExpireDate){
+							cache.put(ev.request, fetchRes.clone())
+						}
+						return fetchRes
+					})
+				})
+
+			})
+		)
+	}
 })
