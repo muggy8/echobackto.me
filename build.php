@@ -37,4 +37,4 @@
 	}
 
 	echo $currentVersion = hashDirectory(".");
-	file_put_contents("version/$currentVersion", "");
+	file_put_contents("version/index.html", $currentVersion);
