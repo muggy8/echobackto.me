@@ -162,6 +162,9 @@
 
 				<p><strong>Usage:</strong> You first need to calibrate your the app to your surounding enviroment so it can automatically turn on and off the listener. During this process, you should be as quiet as you can and let the recording only detect your ambiant surounding noise. Once that's done, you can toggle listening mode on and off.</p>
 
+
+				<p><strong>Offline Usage:</strong> I have recently turned this app into a Progressive Web App and thus it will now support offline mode. You can feel free to return to this page on your device at any time. You can also install it to your mobile device's home screen by selecting "Add To Home page" from the navigation bar. <a href="http://lmgtfy.com/?q=add+to+home+screen" target="_blank">Here's a link that will help you find how to do that</a></p>
+
 				<p>If calibration results in a sensitivity that's beyond 0.4, it's likely that your enviroment is either really loud or that you made a sound somwhere during the calibration process (dropped a pen maybe?). If this is the case, just refresh the page and try again (or adjust manually).</p>
 
 				<p><strong>Mobile Workaround 1:</strong> Use Firefox for Android (I would immagine same for iOS) as they allow autoplay for media content by default and has an easy and conveniet setting that you can access to toggle this on and off.</p>

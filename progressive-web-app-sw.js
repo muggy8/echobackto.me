@@ -22,12 +22,14 @@ self.addEventListener("fetch", function(ev){
 	// on the request to the index page we do the cache busting
 	if (ev.request.url.match(/^https:\/\/[^\/]+\/?$/i)){
 		// figure out if we should dump the cache
-		var cache, shouldCleanCash = caches.open(cacheName).then(function(oppenedCache){
-			cache = oppenedCache
+		var shouldCleanCash = caches.open(cacheName).then(function(cache){
 			// request for the base HTML. we go and fetch the current version from the network if possiable
 			var versionReq = new Request("/version")
-			var remoteVersionPromise = fetch(versionReq).catch(function(){
-				// network error so we dont really care here
+			var remoteVersionPromise = fetch(versionReq).then(function(fetched){
+				return fetched // pass through
+			}, function(o3o){
+				console.log(o3o)
+				// network error but we dont really care here
 				return
 			})
 			var localVersionPromise = caches.match(versionReq)
@@ -43,7 +45,7 @@ self.addEventListener("fetch", function(ev){
 				}
 				// if there is no local version, cache this into local versions
 				if (!local) {
-					return cache.put(versionReq, remote) // this will resolve to undefined
+					return cache.put(versionReq, remote.clone()) // this will resolve to undefined
 				}
 
 				return Promise.all([
@@ -61,12 +63,14 @@ self.addEventListener("fetch", function(ev){
 		// based on if we should or shouldn't dump the cache, we respond accordingly
 		ev.respondWith(shouldCleanCash.then(function(dumpCache){
 			if (dumpCache){
-				console.log("dumping cache")
+				var cache
 				return caches.delete(cacheName).then(function(){
-					return fetch(ev.request).then(function(fetched){
-						cache.put(ev.request, fetched.clone())
-						return fetched
-					})
+					return caches.open(cacheName)
+				}).then(function(newCache){
+					cache = newCache
+					return cache.addAll(statics)
+				}).then(function(){
+					return caches.match(ev.request)
 				})
 			}
 			else{
@@ -80,27 +84,23 @@ self.addEventListener("fetch", function(ev){
 			caches.open(cacheName).then(function(cache){
 				return caches.match(ev.request).then(function(cacheRes){
 					if (cacheRes){
-						var cacheResExpired = cacheRes.headers.get("expires")
-							? Date.now() >=  new Date(cacheRes.headers.get("expires")).getTime()
-							: false
-						if (!cacheResExpired){
+						var expireDate = cacheRes.headers.get("expires") && new Date(cacheRes.headers.get("expires")).getTime()
+						if (expireDate && expireDate < Date.now()){
 							return cacheRes
 						}
 					}
 					return fetch(ev.request).then(function(fetchRes){
 						// console.log("fetched from network", fetchRes);
-						var isDataUrl = fetchRes.url.match(/^data:/)
+						var isDataUrl = fetchRes.url.match(/^data\:/i)
 						var hasNoCacheHeader = fetchRes.headers.get("cache-control") && fetchRes.headers.get("cache-control").match(/no(-|\s)cache/i)
 						var networkFailure = fetchRes && fetchRes.status >= 200 && fetchRes.status < 300
-						var hasExpireDate = fetchRes.headers.get("expires")
 
-						if (!isDataUrl && !hasNoCacheHeader && !networkFailure && hasExpireDate){
+						if (!isDataUrl && !hasNoCacheHeader && !networkFailure){
 							cache.put(ev.request, fetchRes.clone())
 						}
 						return fetchRes
 					})
 				})
-
 			})
 		)
 	}
