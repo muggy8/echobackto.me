@@ -58,33 +58,6 @@
 		return $buffer;
 	}
 
-	function hashDirectory($directory){
-	    if (!is_dir($directory)){
-	        return false;
-	    }
-
-		$hashVal = array();
-
-		foreach(scandir($directory) as &$subFile){
-			if ($subFile == "." || $subFile == ".."){
-				continue;
-			}
-			$targetFile = $directory . "/" . $subFile;
-			$subFolderHash = hashDirectory($targetFile);
-			// the above will return false if it's not a folder so we can hash it as a file if the above fails
-			if (!$subFolderHash){
-				$subFolderHash = hash_file("sha256", $targetFile);
-			}
-			$hashVal[] = $subFolderHash;
-		}
-
-		return hash("sha256", implode('', $hashVal));
-	}
-
-	$currentVersion = hashDirectory(".");
-
-	file_put_contents("version.json", '{"version":"' . $currentVersion . '"}');
-
 	ob_start();
 
 ?><!DOCTYPE html>
@@ -94,7 +67,6 @@
 			<?=file_get_contents("css/critical.min.css")?>
 		</style>
 		<title>Echo Back to Me</title>
-		<meta name="version" content="<?=$currentVersion?>">
 		<meta name="description" content="Echo what you say back at you hands free.">
 		<meta name="viewport" content="width=device-width, initial-scale=1. minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
 		<meta charset="UTF-8">
@@ -236,6 +208,6 @@
 </html><?php
 	$html = sanitize_output(ob_get_clean());
 
-	file_put_contents("index.html", $html);
+	file_put_contents(dirname(__FILE__) . "/index.html", $html);
 	echo $html;
 ?>
