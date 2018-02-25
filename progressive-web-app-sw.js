@@ -26,7 +26,10 @@ self.addEventListener("fetch", function(ev){
 			cache = oppenedCache
 			// request for the base HTML. we go and fetch the current version from the network if possiable
 			var versionReq = new Request("/version")
-			var remoteVersionPromise = fetch(versionReq)
+			var remoteVersionPromise = fetch(versionReq).catch(function(){
+				// network error so we dont really care here
+				return
+			})
 			var localVersionPromise = caches.match(versionReq)
 
 			// This promise should resolve to something truthy or falsy for weather or not the cache should be dumped and refetched
@@ -35,7 +38,7 @@ self.addEventListener("fetch", function(ev){
 				var local = versions[1]
 
 				// if the remote failed to fetch we are running off the cache so lets not replace it
-				if (remote.status >= 400 || remote.status < 200){
+				if (!remote || remote.status >= 400 || remote.status < 200){
 					return false;
 				}
 				// if there is no local version, cache this into local versions
@@ -47,7 +50,7 @@ self.addEventListener("fetch", function(ev){
 					local.text(),
 					remote.text()
 				]).then(function(texts){
-					if (texts[0] !== texts[1]){
+					if (texts[0] && texts[1] && texts[0] !== texts[1]){
 						return true
 					}
 					return false
@@ -58,6 +61,7 @@ self.addEventListener("fetch", function(ev){
 		// based on if we should or shouldn't dump the cache, we respond accordingly
 		ev.respondWith(shouldCleanCash.then(function(dumpCache){
 			if (dumpCache){
+				console.log("dumping cache")
 				return caches.delete(cacheName).then(function(){
 					return fetch(ev.request).then(function(fetched){
 						cache.put(ev.request, fetched.clone())
