@@ -2,4 +2,5 @@
 index.html
 index.js
 version.json
-/version/*
+version
+version/*
