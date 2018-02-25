@@ -13,7 +13,6 @@
 			$handler = fopen($value, 'w') or die("File <a href='" . $value . "'>" . $value . "</a> error!<br />");
 			fwrite($handler, getMinified($url, file_get_contents($key)));
 			fclose($handler);
-			echo "File <a href='" . $value . "'>" . $value . "</a> done!<br />";
 		}
 	}
 
@@ -47,5 +46,5 @@
 
 	minifyJS([dirname(__FILE__) . "/index.js" => dirname(__FILE__) . "/index.html"]);
 
-	echo file_get_contents(dirname(__FILE__) . "/index.html");
+	echo $js;
 ?>

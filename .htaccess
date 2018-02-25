@@ -17,3 +17,5 @@ Header set Cache-Control "max-age=2628000, must-revalidate, public"
 <filesMatch "(version.json|*.php)">
 Header set Cache-Control no-cache
 </filesMatch>
+
+DirectoryIndex index.htm index.html index.js index.php
