@@ -7,7 +7,8 @@ var statics = [
 	"/js/recorder/recorder.min.js",
 	"/js/recorder/encoderWorker.min.js",
 	"/js/recorder/decoderWorker.min.js",
-	"/css/styles.css"
+	"/css/styles.css",
+	"/version"
 ]
 
 self.addEventListener("install", function(ev){
