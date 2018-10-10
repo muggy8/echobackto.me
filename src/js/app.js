@@ -1,13 +1,46 @@
-const App = (function({div}){
+const App = (function({div, h1, nav, a}){
 	// lets do some good old fassioned dependency injection the angular way cuz why the heck not
     let components = {}
+	let constants = {
+		homeRout: /^\/$/,
+		aboutRout: /^\/about$/,
+	}
 	return class App extends React.Component {
+		constructor(){
+			super()
+			this.state = {
+				path: "/",
+			}
+		}
+
 		render(){
-			return div({})
+			return div({},
+				h1({}, "Echo Back To Me"),
+				nav({},
+					a((()=>{
+						let props = {href: "#"}
+						if (App.constants.homeRout.test(this.state.path)){
+							props.className = "active"
+						}
+						return props
+					})(), "App"),
+					a((()=>{
+						let props = {href: "#"}
+						if (App.constants.homeRout.test(this.state.path)){
+							props.className = "active"
+						}
+						return props
+					})(), "About"),
+				),
+			)
 		}
 
         static get Components(){
             return components
+        }
+
+        static get Constants(){
+            return constants
         }
 	}
 })(React.DOM)
