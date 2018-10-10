@@ -26,7 +26,7 @@ const App = (function({div, h1, nav, a}){
 					})(), "App"),
 					a((()=>{
 						let props = {href: "#"}
-						if (App.Constants.homeRout.test(this.state.path)){
+						if (App.Constants.aboutRout.test(this.state.path)){
 							props.className = "active"
 						}
 						return props
