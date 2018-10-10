@@ -18,14 +18,26 @@ const App = (function({div, h1, nav, a}){
 				h1("Echo Back To Me"),
 				nav(
 					a((()=>{
-						let props = {href: "#"}
+						let props = {
+                            href: "#",
+                            onClick: (ev)=>{
+                                ev.preventDefault()
+                                this.setState({path: "/"})
+                            },
+                        }
 						if (App.Constants.homeRout.test(this.state.path)){
 							props.className = "active"
 						}
 						return props
 					})(), "App"),
 					a((()=>{
-						let props = {href: "#"}
+						let props = {
+                            href: "#",
+                            onClick: (ev)=>{
+                                ev.preventDefault()
+                                this.setState({path: "/about"})
+                            },
+                        }
 						if (App.Constants.aboutRout.test(this.state.path)){
 							props.className = "active"
 						}

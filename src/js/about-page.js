@@ -1,4 +1,4 @@
-App.Components.Recorder = (function({div, p, strong, a}){
+App.Components.AboutPage = (function({div, p, strong, a}){
 	return class extends React.Component {
 		render(){
 			return div()
