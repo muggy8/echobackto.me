@@ -1,0 +1,45 @@
+
+h1{
+    margin-top: 1em;
+	padding-top: 0.67em;
+	padding-bottom: 0.67em;
+	border-top-left-radius: 0.75em;
+    border-top-right-radius: 0.75em;
+	background-color: #FFF;;
+    font-size: 1.5em;
+    color: #A002EB;
+}
+nav{
+    padding-bottom: 0;
+    background-color: #FFF;
+    display: flex;
+
+    /* This is because the nav and h1 together forms the pill */
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+
+    /* box shadow for the illusion of a bigger pill */
+    box-shadow:
+        0 1em 0px 0px #FFF,
+        0 2em 0px 0px #FFF;
+    background-color: #FFF;
+}
+nav > a{
+    text-decoration: none;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    flex-grow: 1;
+    background-color: #DDD;
+    color: #A002EB;
+    opacity: 0.5;
+
+    padding: 0.5em 0;
+
+    /* Border for the illusion of tabs */
+    border: solid 0.5em #FFF;
+    border-top: none;
+    border-bottom: none;
+}
+nav > a.active{
+    opacity: 1;
+}
