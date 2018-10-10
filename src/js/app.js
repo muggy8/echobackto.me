@@ -15,18 +15,18 @@ const App = (function({div, h1, nav, a}){
 
 		render(){
 			return div({},
-				h1({}, "Echo Back To Me"),
-				nav({},
+				h1("Echo Back To Me"),
+				nav(
 					a((()=>{
 						let props = {href: "#"}
-						if (App.constants.homeRout.test(this.state.path)){
+						if (App.Constants.homeRout.test(this.state.path)){
 							props.className = "active"
 						}
 						return props
 					})(), "App"),
 					a((()=>{
 						let props = {href: "#"}
-						if (App.constants.homeRout.test(this.state.path)){
+						if (App.Constants.homeRout.test(this.state.path)){
 							props.className = "active"
 						}
 						return props
@@ -43,4 +43,4 @@ const App = (function({div, h1, nav, a}){
             return constants
         }
 	}
-})(React.DOM)
+})(REP)
