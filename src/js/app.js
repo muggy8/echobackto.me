@@ -32,6 +32,14 @@ const App = (function({div, h1, nav, a}){
 						return props
 					})(), "About"),
 				),
+				(()=>{
+					if (App.Constants.homeRout.test(this.state.path)){
+						return React.createElement(App.Components.Recorder, this.state)
+					}
+					else if (App.Constants.aboutRout.test(this.state.path)){
+						return React.createElement(App.Components.AboutPage, this.state)
+					}
+				})()
 			)
 		}
 
