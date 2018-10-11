@@ -43,3 +43,16 @@ nav > a{
 nav > a.active{
     opacity: 1;
 }
+
+.content{
+    background-color: #DDD;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+    padding: 0.5em;
+}
+.content p{
+    text-align: left;
+    margin-bottom: 0.5em;
+}
