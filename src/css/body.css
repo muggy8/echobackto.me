@@ -37,7 +37,6 @@ nav > a{
 
     /* Border for the illusion of tabs */
     border: solid 0.5em #FFF;
-    border-top: none;
     border-bottom: none;
 }
 nav > a.active{
@@ -51,6 +50,8 @@ nav > a.active{
     border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em;
     padding: 0.5em;
+    overflow: auto;
+    max-height: calc(100vh - 8.5em);
 }
 .content p{
     text-align: left;
