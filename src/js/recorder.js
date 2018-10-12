@@ -3,7 +3,7 @@ App.Components.Recorder = (function({div, label, button}){
 		constructor(prop){
 			super(prop)
 			var context = this
-			context.sate = prop.state
+			context.state = prop.state
 
 			if (!Recorder.isRecordingSupported()) {
 				alert("browser not supported");
@@ -16,20 +16,28 @@ App.Components.Recorder = (function({div, label, button}){
 				encoderPath: "https://github.com/chris-rudmin/opus-recorder/blob/master/dist/encoderWorker.min.js"
 			})
 
-			recorder.addEventListener("start", function(){
+			console.log(recorder)
+
+			recorder.onstart = function(){
 				context.setState({recording: true})
-			})
+				console.log("start")
+			}
 
-			recorder.addEventListener("stop", function(){
+			recorder.onstop = function(){
 				context.setState({recording: false})
-			})
+				console.log("stop")
+			}
 
-			recorder.addEventListener("dataavailable", context.receivedNewRecording.bind(context))
+			recorder.ondataavailable = context.receivedNewRecording.bind(context)
 		}
 
 		render(){
 			return div({className: "content"},
-				button(this.state.recording ? "stop" : "start")
+				button({onClick: ()=>{
+					this.state.recording ? this.recorder.stop() : this.recorder.start()
+				}},
+					this.state.recording ? "stop" : "start"
+				)
 			)
 		}
 
