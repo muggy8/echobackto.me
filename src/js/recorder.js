@@ -10,39 +10,49 @@ App.Components.Recorder = (function({div, label, button}){
 				return;
 			}
 
-			var recorder = context.recorder = new Recorder({
+			if (prop.state.recorder){
+				this.recorder = prop.state.recorder
+				return
+			}
+
+			var recorder = this.recorder = new Recorder({
 				encoderApplication: 2048,
 				numberOfChannels: 1,
-				encoderPath: "deps/opus-recorder-master/recorder.min.js"
+				encoderPath: "deps/opus-recorder-master/encoderWorker.min.js"
 			})
 
-			console.log(recorder)
-
 			recorder.onstart = function(){
-				context.setState({recording: true})
 				console.log("start")
+				context.setState({recording: true})
 			}
 
 			recorder.onstop = function(){
-				context.setState({recording: false})
 				console.log("stop")
+				context.setState({recording: false})
 			}
 
-			recorder.ondataavailable = context.receivedNewRecording.bind(context)
+			recorder.ondataavailable =			context.receivedNewRecording.bind(context)
+
+			prop.state.recorder = this.recorder // export recorder to the global state to be cached for the next iteration
+		}
+
+		componentWillUnmount(){
+			this.recorder.stop()
 		}
 
 		render(){
 			return div({className: "content"},
 				button({onClick: ()=>{
-					this.state.recording ? this.recorder.stop() : this.recorder.start()
+					console.log(this)
+					this.state.recording ? this.state.recorder.stop() : this.state.recorder.start()
 				}},
-					this.state.recording ? "stop" : "start"
+					this.state.recording ? "Stop" : "Start"
 				)
 			)
 		}
 
 		receivedNewRecording(event){
-			console.log(this)
+			console.log(this, event)
 		}
 	}
 })(REP)
