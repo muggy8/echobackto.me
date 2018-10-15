@@ -21,10 +21,12 @@ App.Components.Recorder = (function({div, label, button}){
 				encoderPath: "deps/opus-recorder/encoderWorker.min.js"
 			})
 
-			recorder.onstart = function(){
-				console.log("start")
-				context.setState({recording: true})
-			}
+			// recorder.onstart = function(){
+			// 	console.log("start")
+			// 	context.setState({recording: true})
+			// }
+
+			recorder.onstart = context.startRecording.bind(context)
 
 			recorder.onstop = function(){
 				console.log("stop")
@@ -49,6 +51,28 @@ App.Components.Recorder = (function({div, label, button}){
 					this.state.recording ? "Stop" : "Start"
 				)
 			)
+		}
+
+		// the event management stuff
+		get startRecording(){
+			return this.beginAmbiantSeek
+		}
+
+		beginAmbiantSeek(){
+			this.setState({recording: true})
+			setTimeout(()=>{
+				this.recorder.stop()
+			}, 3000)
+		}
+
+		beginSegmentRecording(){}
+
+		get stopRecording(){
+			return this.receiveAmbiantAvarage
+		}
+
+		receiveAmbiantAvarage(recordedSample){
+
 		}
 
 		receivedNewRecording(event){
