@@ -18,7 +18,7 @@ App.Components.Recorder = (function({div, label, button}){
 			var recorder = this.recorder = new Recorder({
 				encoderApplication: 2048,
 				numberOfChannels: 1,
-				encoderPath: "deps/opus-recorder-master/encoderWorker.min.js"
+				encoderPath: "deps/opus-recorder/encoderWorker.min.js"
 			})
 
 			recorder.onstart = function(){
