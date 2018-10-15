@@ -1,4 +1,14 @@
 App.Components.Recorder = (function({div, label, button}){
+	function arrayBufferToBase64(buffer) {
+		var binary = '';
+		var bytes = new Uint8Array( buffer );
+		var len = bytes.byteLength;
+		for (var i = 0; i < len; i++) {
+			binary += String.fromCharCode( bytes[ i ] );
+		}
+		return window.btoa( binary );
+	}
+
 	return class extends React.Component {
 		constructor(prop){
 			super(prop)
@@ -21,19 +31,11 @@ App.Components.Recorder = (function({div, label, button}){
 				encoderPath: "deps/opus-recorder/encoderWorker.min.js"
 			})
 
-			// recorder.onstart = function(){
-			// 	console.log("start")
-			// 	context.setState({recording: true})
-			// }
+			recorder.onstart = ()=>context.startRecording()
 
-			recorder.onstart = context.startRecording.bind(context)
+			recorder.onstop = ()=>context.setState({recording: false})
 
-			recorder.onstop = function(){
-				console.log("stop")
-				context.setState({recording: false})
-			}
-
-			recorder.ondataavailable =			context.receivedNewRecording.bind(context)
+			recorder.ondataavailable = (data)=>context.stopRecording(data)
 
 			prop.state.recorder = this.recorder // export recorder to the global state to be cached for the next iteration
 		}
@@ -72,7 +74,19 @@ App.Components.Recorder = (function({div, label, button}){
 		}
 
 		receiveAmbiantAvarage(recordedSample){
+			console.log(recordedSample)
 
+			var avarage = recordedSample.reduce((sum, tick)=>sum+tick, 0) / recordedSample.length
+
+			this.setState({recorder: {avarage}})
+
+			console.log(avarage)
+			//
+			// var blob = new Blob([recordedSample], {type : 'audio/ogg'})
+			//
+			// var url = URL.createObjectURL(blob)
+
+			console.log("data:audio/ogg;base64," + arrayBufferToBase64(recordedSample))
 		}
 
 		receivedNewRecording(event){
