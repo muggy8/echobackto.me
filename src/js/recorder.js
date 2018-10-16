@@ -28,7 +28,8 @@ App.Components.Recorder = (function({div, label, button}){
 			var recorder = this.recorder = new Recorder({
 				encoderApplication: 2048,
 				numberOfChannels: 1,
-				encoderPath: "deps/opus-recorder/encoderWorker.min.js"
+				encoderPath: "deps/opus-recorder/encoderWorker.min.js",
+				// streamPages: true,
 			})
 
 			recorder.onstart = ()=>context.startRecording()
@@ -75,18 +76,20 @@ App.Components.Recorder = (function({div, label, button}){
 
 		receiveAmbiantAvarage(recordedSample){
 			console.log(recordedSample)
+			// console.log(new Blob( [recordedSample], { type: 'audio/ogg' } ))
 
-			var avarage = recordedSample.reduce((sum, tick)=>sum+tick, 0) / recordedSample.length
+			var distribution = {}
+			var greaterSum = recordedSample.forEach(function(bit){
+				distribution[bit] = distribution[bit] || 0
+				distribution[bit]++
+			})
 
-			this.setState({recorder: {avarage}})
 
-			console.log(avarage)
-			//
-			// var blob = new Blob([recordedSample], {type : 'audio/ogg'})
-			//
-			// var url = URL.createObjectURL(blob)
+			// this.setState({recorder: {avarage}})
 
-			console.log("data:audio/ogg;base64," + arrayBufferToBase64(recordedSample))
+			console.log(distribution)
+
+			// console.log("data:audio/ogg;base64," + arrayBufferToBase64(recordedSample))
 		}
 
 		receivedNewRecording(event){
