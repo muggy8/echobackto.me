@@ -62,6 +62,10 @@ App.Components.Recorder = (function({div, label, button}){
 		}
 
 		beginAmbiantSeek(){
+			// welp the first thing i'm gonna do is to setup the silly thing where we listen to the raw events cuz the thing is public in the library derp and secnd there's no other way :/
+			this.recorder.scriptProcessorNode.addEventListener("audioprocess", (e)=>{this.receiveRawData(e)})
+
+			// k now we record for 3 seconds
 			this.setState({recording: true})
 			setTimeout(()=>{
 				this.recorder.stop()
@@ -75,25 +79,33 @@ App.Components.Recorder = (function({div, label, button}){
 		}
 
 		receiveAmbiantAvarage(recordedSample){
-			console.log(recordedSample)
+			// console.log(recordedSample)
 			// console.log(new Blob( [recordedSample], { type: 'audio/ogg' } ))
 
-			var distribution = {}
-			var greaterSum = recordedSample.forEach(function(bit){
-				distribution[bit] = distribution[bit] || 0
-				distribution[bit]++
-			})
+			// var distribution = {}
+			// var greaterSum = recordedSample.forEach(function(bit){
+			// 	distribution[bit] = distribution[bit] || 0
+			// 	distribution[bit]++
+			// })
 
 
 			// this.setState({recorder: {avarage}})
 
-			console.log(distribution)
+			// console.log(distribution)
 
 			// console.log("data:audio/ogg;base64," + arrayBufferToBase64(recordedSample))
 		}
 
 		receivedNewRecording(event){
 			console.log(this, event)
+		}
+
+		get receiveRawData(){
+			return this.trackAmbiant
+		}
+
+		trackAmbiant(e){
+			console.log(e.inputBuffer.getChannelData(0))
 		}
 	}
 })(REP)
