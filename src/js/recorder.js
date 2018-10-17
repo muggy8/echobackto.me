@@ -1,4 +1,4 @@
-App.Components.Recorder = (function({div, label, button}){
+App.Components.Recorder = (function({div, label, button, input, span}){
 	// private static stuff
 	function arrayBufferToBase64(buffer) {
 		var binary = '';
@@ -44,17 +44,35 @@ App.Components.Recorder = (function({div, label, button}){
 		}
 
 		render(){
+			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			return div({className: "content"},
 				div(
 					button({onClick: ()=>{
 						this.state.recording
-							? (Object.hasOwnProperty(state, "ambDiff") && recorder.stop())
+							? (initiated && recorder.stop())
 							: recorder.start()
 					}},
 						monoButtonText(this.state)
 					)
 				),
-				div()
+				div(
+					span("Ambiant Noise Level: "),
+					input({
+						value: this.state.newAmbDiff || this.state.ambDiff || "",
+						type: "number",
+						min: 0,
+						max: 1,
+						onChange: (ev)=>this.setState({newAmbDiff: ev.target.value}),
+						disabled: !initiated ? "disabled" : undefined,
+						placeholder: "???"
+					}),
+					initiated
+						? button({onClick: ()=>this.setState({
+							ambDiff: this.sate.newAmbDiff,
+							newAmbDiff: undefined,
+						})}, "Update")
+						: null
+				)
 			)
 		}
 
@@ -76,12 +94,12 @@ App.Components.Recorder = (function({div, label, button}){
 
 	function monoButtonText(state){
 		var recording = state.recording
-		var initiated = Object.hasOwnProperty(state, "ambDiff")
+		var initiated = Object.prototype.hasOwnProperty.call(state, "ambDiff")
 		if (recording && initiated){
-			return "Stop"
+			return "Stop Auto Recorder"
 		}
 		else if (!recording && initiated){
-			return "Start"
+			return "Start Auto Recording"
 		}
 		else if (recording && !initiated){
 			return "Please Wait for Calibration"
