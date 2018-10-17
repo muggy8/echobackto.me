@@ -5,6 +5,44 @@ const App = (function({div, h1, nav, a}){
 		homeRout: /^\/$/,
 		aboutRout: /^\/about$/,
 	}
+
+	function homeRoutProps(context){
+		let props = {
+			href: "#",
+			onClick: (ev)=>{
+				ev.preventDefault()
+				context.setState({path: "/"})
+			},
+		}
+		if (App.Constants.homeRout.test(context.state.path)){
+			props.className = "active"
+		}
+		return props
+	}
+
+	function aboutRoutProps(context){
+		let props = {
+			href: "#",
+			onClick: (ev)=>{
+				ev.preventDefault()
+				context.setState({path: "/about"})
+			},
+		}
+		if (App.Constants.aboutRout.test(context.state.path)){
+			props.className = "active"
+		}
+		return props
+	}
+
+	function appBody(context){
+		if (App.Constants.homeRout.test(context.state.path)){
+			return React.createElement(App.Components.Recorder, {state: context.state})
+		}
+		else if (App.Constants.aboutRout.test(context.state.path)){
+			return React.createElement(App.Components.AboutPage, context.state)
+		}
+	}
+
 	return class App extends React.Component {
 		constructor(){
 			super()
@@ -17,10 +55,10 @@ const App = (function({div, h1, nav, a}){
 			return div({},
 				h1("Echo Back To Me"),
 				nav(
-					a(this.homeRoutProps, "App"),
-					a(this.aboutRoutProps, "About"),
+					a(homeRoutProps(this), "App"),
+					a(aboutRoutProps(this), "About"),
 				),
-				this.appBody
+				appBody(this)
 			)
 		}
 
@@ -31,42 +69,5 @@ const App = (function({div, h1, nav, a}){
         static get Constants(){
             return constants
         }
-
-		get homeRoutProps(){
-			let props = {
-	            href: "#",
-	            onClick: (ev)=>{
-	                ev.preventDefault()
-	                this.setState({path: "/"})
-	            },
-	        }
-			if (App.Constants.homeRout.test(this.state.path)){
-				props.className = "active"
-			}
-			return props
-		}
-
-		get aboutRoutProps(){
-			let props = {
-				href: "#",
-				onClick: (ev)=>{
-					ev.preventDefault()
-					this.setState({path: "/about"})
-				},
-			}
-			if (App.Constants.aboutRout.test(this.state.path)){
-				props.className = "active"
-			}
-			return props
-		}
-
-		get appBody(){
-			if (App.Constants.homeRout.test(this.state.path)){
-				return React.createElement(App.Components.Recorder, {state: this.state})
-			}
-			else if (App.Constants.aboutRout.test(this.state.path)){
-				return React.createElement(App.Components.AboutPage, this.state)
-			}
-		}
 	}
 })(REP)
