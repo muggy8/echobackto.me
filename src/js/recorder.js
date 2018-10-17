@@ -1,4 +1,5 @@
 App.Components.Recorder = (function({div, label, button}){
+	// private static stuff
 	function arrayBufferToBase64(buffer) {
 		var binary = '';
 		var bytes = new Uint8Array( buffer );
@@ -9,6 +10,39 @@ App.Components.Recorder = (function({div, label, button}){
 		return window.btoa( binary );
 	}
 
+	var maxSum = 0
+	var minSum = 0
+	var maxCount = 0
+	var minCount = 0
+	var maxAvarage
+	var minAvarage
+	var recorder =  new Recorder({
+		encoderApplication: 2048,
+		numberOfChannels: 1,
+		encoderPath: "deps/opus-recorder/encoderWorker.min.js",
+	})
+
+	function findAvarageOfAudioProcess(e){
+		console.log(e.inputBuffer.getChannelData(0))
+	}
+
+	function ambiantSeekBegin(){
+		// welp the first thing i'm gonna do is to setup the silly thing where we listen to the raw events cuz the thing is public in the library derp and secnd there's no other way :/
+		recorder.scriptProcessorNode.addEventListener("audioprocess", findAvarageOfAudioProcess)
+
+		// k now we record for 3 seconds
+		setTimeout(()=>{
+			recorder.stop()
+		}, 3000)
+	}
+
+	function ambiantSeekEnd(){
+		recorder.scriptProcessorNode.removeEventListener("audioprocess", findAvarageOfAudioProcess)
+	}
+
+	function nullFunction(){}
+
+	// ok here's the actual class that does stuff :3
 	return class extends React.Component {
 		constructor(prop){
 			super(prop)
@@ -20,36 +54,21 @@ App.Components.Recorder = (function({div, label, button}){
 				return;
 			}
 
-			if (prop.state.recorder){
-				this.recorder = prop.state.recorder
-				return
-			}
+			recorder.onstart = ()=>context.recordingStarted()
 
-			var recorder = this.recorder = new Recorder({
-				encoderApplication: 2048,
-				numberOfChannels: 1,
-				encoderPath: "deps/opus-recorder/encoderWorker.min.js",
-				// streamPages: true,
-			})
+			recorder.onstop = ()=>context.recordingStopped()
 
-			recorder.onstart = ()=>context.startRecording()
-
-			recorder.onstop = ()=>context.setState({recording: false})
-
-			recorder.ondataavailable = (data)=>context.stopRecording(data)
-
-			prop.state.recorder = this.recorder // export recorder to the global state to be cached for the next iteration
+			recorder.ondataavailable = (data)=>context.dataReceived(data)
 		}
 
 		componentWillUnmount(){
-			this.recorder.stop()
+			recorder.stop()
 		}
 
 		render(){
 			return div({className: "content"},
 				button({onClick: ()=>{
-					console.log(this)
-					this.state.recording ? this.state.recorder.stop() : this.state.recorder.start()
+					this.state.recording ? recorder.stop() : recorder.start()
 				}},
 					this.state.recording ? "Stop" : "Start"
 				)
@@ -57,55 +76,18 @@ App.Components.Recorder = (function({div, label, button}){
 		}
 
 		// the event management stuff
-		get startRecording(){
-			return this.beginAmbiantSeek
-		}
-
-		beginAmbiantSeek(){
-			// welp the first thing i'm gonna do is to setup the silly thing where we listen to the raw events cuz the thing is public in the library derp and secnd there's no other way :/
-			this.recorder.scriptProcessorNode.addEventListener("audioprocess", (e)=>{this.receiveRawData(e)})
-
-			// k now we record for 3 seconds
+		get recordingStarted(){
 			this.setState({recording: true})
-			setTimeout(()=>{
-				this.recorder.stop()
-			}, 3000)
+			return ambiantSeekBegin
 		}
 
-		beginSegmentRecording(){}
-
-		get stopRecording(){
-			return this.receiveAmbiantAvarage
+		get recordingStopped(){
+			this.setState({recording: false})
+			return ambiantSeekEnd
 		}
 
-		receiveAmbiantAvarage(recordedSample){
-			// console.log(recordedSample)
-			// console.log(new Blob( [recordedSample], { type: 'audio/ogg' } ))
-
-			// var distribution = {}
-			// var greaterSum = recordedSample.forEach(function(bit){
-			// 	distribution[bit] = distribution[bit] || 0
-			// 	distribution[bit]++
-			// })
-
-
-			// this.setState({recorder: {avarage}})
-
-			// console.log(distribution)
-
-			// console.log("data:audio/ogg;base64," + arrayBufferToBase64(recordedSample))
-		}
-
-		receivedNewRecording(event){
-			console.log(this, event)
-		}
-
-		get receiveRawData(){
-			return this.trackAmbiant
-		}
-
-		trackAmbiant(e){
-			console.log(e.inputBuffer.getChannelData(0))
+		get dataReceived(){
+			return nullFunction
 		}
 	}
 })(REP)
