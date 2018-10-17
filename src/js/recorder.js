@@ -47,15 +47,6 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			return div({className: "content"},
 				div(
-					button({onClick: ()=>{
-						this.state.recording
-							? (initiated && recorder.stop())
-							: recorder.start()
-					}},
-						monoButtonText(this.state)
-					)
-				),
-				div(
 					span("Ambiant Noise Level: "),
 					input({
 						value: this.state.newAmbDiff || this.state.ambDiff || "",
@@ -72,7 +63,16 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 							newAmbDiff: undefined,
 						})}, "Update")
 						: null
-				)
+				),
+				div(
+					button({onClick: ()=>{
+						this.state.recording
+							? (initiated && recorder.stop())
+							: recorder.start()
+					}},
+						monoButtonText(this.state)
+					)
+				),
 			)
 		}
 
