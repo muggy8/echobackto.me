@@ -80,17 +80,20 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 
 		// the event management stuff
 		get recordingStarted(){
+			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			this.setState({recording: true})
-			return ambiantSeekBegin
+			return initiated ? nullFunction : ambiantSeekBegin
 		}
 
 		get recordingStopped(){
+			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			this.setState({recording: false})
-			return ambiantSeekEnd
+			return initiated ? nullFunction : ambiantSeekEnd
 		}
 
 		get dataReceived(){
-			return nullFunction
+			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
+			return initiated ? nullFunction : nullFunction
 		}
 	}
 
