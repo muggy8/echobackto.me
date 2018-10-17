@@ -20,6 +20,8 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		encoderPath: "deps/opus-recorder/encoderWorker.min.js",
 	})
 
+	function nullFunction(){}
+
 	// ok here's the actual class that does stuff :3
 	return class extends React.Component {
 		constructor(prop){
@@ -92,6 +94,8 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		}
 	}
 
+
+	// functionally private methods
 	function monoButtonText(state){
 		var recording = state.recording
 		var initiated = Object.prototype.hasOwnProperty.call(state, "ambDiff")
@@ -109,7 +113,6 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		}
 	}
 
-	// functionally private methods
 	function findAvarageOfAudioProcess(e){
 		e.inputBuffer.getChannelData(0).forEach(function(tick){
 			if (tick > 0){
@@ -148,5 +151,4 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		console.log(maxAvarage, minAvarage, diffAvarage, this)
 	}
 
-	function nullFunction(){}
 })(REP)
