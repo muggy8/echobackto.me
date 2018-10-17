@@ -45,11 +45,16 @@ App.Components.Recorder = (function({div, label, button}){
 
 		render(){
 			return div({className: "content"},
-				button({onClick: ()=>{
-					this.state.recording ? recorder.stop() : recorder.start()
-				}},
-					this.state.recording ? "Stop" : "Start"
-				)
+				div(
+					button({onClick: ()=>{
+						this.state.recording
+							? (Object.hasOwnProperty(state, "ambDiff") && recorder.stop())
+							: recorder.start()
+					}},
+						monoButtonText(this.state)
+					)
+				),
+				div()
 			)
 		}
 
@@ -66,6 +71,23 @@ App.Components.Recorder = (function({div, label, button}){
 
 		get dataReceived(){
 			return nullFunction
+		}
+	}
+
+	function monoButtonText(state){
+		var recording = state.recording
+		var initiated = Object.hasOwnProperty(state, "ambDiff")
+		if (recording && initiated){
+			return "Stop"
+		}
+		else if (!recording && initiated){
+			return "Start"
+		}
+		else if (recording && !initiated){
+			return "Please Wait for Calibration"
+		}
+		else if (!recording && !initiated){
+			return "Calibrate"
 		}
 	}
 
