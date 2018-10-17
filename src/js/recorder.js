@@ -82,18 +82,18 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		get recordingStarted(){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			this.setState({recording: true})
-			return initiated ? nullFunction : ambiantSeekBegin
+			return initiated ? beginMonitoringForTakes : ambiantSeekBegin
 		}
 
 		get recordingStopped(){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			this.setState({recording: false})
-			return initiated ? nullFunction : ambiantSeekEnd
+			return initiated ? stopMonitoringForTakes : ambiantSeekEnd
 		}
 
 		get dataReceived(){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
-			return initiated ? nullFunction : nullFunction
+			return initiated ? receiveNewTake : nullFunction
 		}
 	}
 
@@ -116,6 +116,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		}
 	}
 
+	// this is the code used to find the ambiant noise
 	function findAvarageOfAudioProcess(e){
 		e.inputBuffer.getChannelData(0).forEach(function(tick){
 			if (tick > 0){
@@ -152,6 +153,23 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		maxSum = minSum = maxCount = minCount = 0
 
 		console.log(maxAvarage, minAvarage, diffAvarage, this)
+	}
+
+	// this is the code to manage auto stopping and starting
+	function beginMonitoringForTakes(){
+		recorder.scriptProcessorNode.addEventListener("audioprocess", audioProcessMonitor)
+	}
+
+	function audioProcessMonitor(e){
+		console.log(e.inputBuffer.getChannelData(0))
+	}
+
+	function stopMonitoringForTakes(){
+		recorder.scriptProcessorNode.removeEventListener("audioprocess", audioProcessMonitor)
+	}
+
+	function receiveNewTake(data){
+		console.log("data:audio/ogg;base64," + arrayBufferToBase64(data))
 	}
 
 })(REP)
