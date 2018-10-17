@@ -16,6 +16,7 @@ App.Components.Recorder = (function({div, label, button}){
 	var minCount = 0
 	var maxAvarage
 	var minAvarage
+	var diffAvarage
 	var recorder =  new Recorder({
 		encoderApplication: 2048,
 		numberOfChannels: 1,
@@ -23,7 +24,17 @@ App.Components.Recorder = (function({div, label, button}){
 	})
 
 	function findAvarageOfAudioProcess(e){
-		console.log(e.inputBuffer.getChannelData(0))
+		e.inputBuffer.getChannelData(0).forEach(function(tick){
+			if (tick > 0){
+				maxSum += tick
+				maxCount++
+			}
+			else if (tick < 0){
+				minSum += tick
+				minCount++
+			}
+			// there's no point tracking 0 cuz it only dilutes the avarages and should be very rare
+		})
 	}
 
 	function ambiantSeekBegin(){
@@ -38,6 +49,10 @@ App.Components.Recorder = (function({div, label, button}){
 
 	function ambiantSeekEnd(){
 		recorder.scriptProcessorNode.removeEventListener("audioprocess", findAvarageOfAudioProcess)
+		maxAvarage = maxSum / maxCount
+		minAvarage = minSum / minCount
+		diffAvarage = maxAvarage - minAvarage
+		console.log(maxAvarage, minAvarage)
 	}
 
 	function nullFunction(){}
