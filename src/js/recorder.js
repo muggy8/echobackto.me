@@ -14,48 +14,11 @@ App.Components.Recorder = (function({div, label, button}){
 	var minSum = 0
 	var maxCount = 0
 	var minCount = 0
-	var maxAvarage
-	var minAvarage
-	var diffAvarage
 	var recorder =  new Recorder({
 		encoderApplication: 2048,
 		numberOfChannels: 1,
 		encoderPath: "deps/opus-recorder/encoderWorker.min.js",
 	})
-
-	function findAvarageOfAudioProcess(e){
-		e.inputBuffer.getChannelData(0).forEach(function(tick){
-			if (tick > 0){
-				maxSum += tick
-				maxCount++
-			}
-			else if (tick < 0){
-				minSum += tick
-				minCount++
-			}
-			// there's no point tracking 0 cuz it only dilutes the avarages and should be very rare
-		})
-	}
-
-	function ambiantSeekBegin(){
-		// welp the first thing i'm gonna do is to setup the silly thing where we listen to the raw events cuz the thing is public in the library derp and secnd there's no other way :/
-		recorder.scriptProcessorNode.addEventListener("audioprocess", findAvarageOfAudioProcess)
-
-		// k now we record for 3 seconds
-		setTimeout(()=>{
-			recorder.stop()
-		}, 3000)
-	}
-
-	function ambiantSeekEnd(){
-		recorder.scriptProcessorNode.removeEventListener("audioprocess", findAvarageOfAudioProcess)
-		maxAvarage = maxSum / maxCount
-		minAvarage = minSum / minCount
-		diffAvarage = maxAvarage - minAvarage
-		console.log(maxAvarage, minAvarage)
-	}
-
-	function nullFunction(){}
 
 	// ok here's the actual class that does stuff :3
 	return class extends React.Component {
@@ -105,4 +68,45 @@ App.Components.Recorder = (function({div, label, button}){
 			return nullFunction
 		}
 	}
+
+	// functionally private methods
+	function findAvarageOfAudioProcess(e){
+		e.inputBuffer.getChannelData(0).forEach(function(tick){
+			if (tick > 0){
+				maxSum += tick
+				maxCount++
+			}
+			else if (tick < 0){
+				minSum += tick
+				minCount++
+			}
+			// there's no point tracking 0 cuz it only dilutes the avarages and should be very rare
+		})
+	}
+
+	function ambiantSeekBegin(){
+		// welp the first thing i'm gonna do is to setup the silly thing where we listen to the raw events cuz the thing is public in the library derp and secnd there's no other way :/
+		recorder.scriptProcessorNode.addEventListener("audioprocess", findAvarageOfAudioProcess)
+
+		// k now we record for 3 seconds
+		setTimeout(()=>{
+			recorder.stop()
+		}, 3000)
+	}
+
+	function ambiantSeekEnd(){
+		recorder.scriptProcessorNode.removeEventListener("audioprocess", findAvarageOfAudioProcess)
+
+		var maxAvarage = maxSum / maxCount
+		var minAvarage = minSum / minCount
+		var diffAvarage = maxAvarage - minAvarage
+
+		this.setState({ambDiff: diffAvarage})
+		// clear it all after so if we need to recalibrate we can
+		maxSum = minSum = maxCount = minCount = 0
+
+		console.log(maxAvarage, minAvarage, diffAvarage, this)
+	}
+
+	function nullFunction(){}
 })(REP)
