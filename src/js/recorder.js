@@ -19,6 +19,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		numberOfChannels: 1,
 		encoderPath: "deps/opus-recorder/encoderWorker.min.js",
 	})
+	var pauseThreshold = 10
 
 	function nullFunction(){}
 
@@ -39,6 +40,8 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			recorder.onstop = ()=>context.recordingStopped()
 
 			recorder.ondataavailable = (data)=>context.dataReceived(data)
+
+			context.audioProcessMonitor = audioProcessMonitor.bind(context) // we'll need this later
 		}
 
 		componentWillUnmount(){
@@ -62,7 +65,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 					initiated
 						? button({onClick: ()=>this.setState({
 							ambDiff: this.sate.newAmbDiff,
-							newAmbDiff: undefined,
+							newAmbDiff: this.audioProcessMonitor.count = undefined,
 						})}, "Update")
 						: null
 				),
@@ -153,19 +156,55 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		maxSum = minSum = maxCount = minCount = 0
 
 		console.log(maxAvarage, minAvarage, diffAvarage, this)
+		recorder.start()
+		recorder.pause()
 	}
 
 	// this is the code to manage auto stopping and starting
 	function beginMonitoringForTakes(){
-		recorder.scriptProcessorNode.addEventListener("audioprocess", audioProcessMonitor)
+		recorder.scriptProcessorNode.addEventListener("audioprocess", this.audioProcessMonitor)
 	}
 
 	function audioProcessMonitor(e){
-		console.log(e.inputBuffer.getChannelData(0))
+		let context = this
+		let maxSum = 0
+		let minSum = 0
+		let maxCount = 0
+		let minCount = 0
+		e.inputBuffer.getChannelData(0).forEach(function(tick){
+			if (tick > 0){
+				maxSum += tick
+				maxCount++
+			}
+			if (tick < 0){
+				minSum += tick
+				minCount++
+			}
+		})
+		let diff = (maxSum / maxCount) - (minSum / minCount)
+
+
+		if (recorder.state !== "recording"){
+			(diff > (context.state.ambDiff * 2)) && (recorder.resume(), console.log("auto resume"))
+		}
+		else{
+			if (diff < context.state.ambDiff && context.audioProcessMonitor.count < pauseThreshold){
+				context.audioProcessMonitor.count = context.audioProcessMonitor.count || 0
+				context.audioProcessMonitor.count++
+			}
+			else if (diff > context.state.ambDiff){
+				context.audioProcessMonitor.count = 0
+			}
+			else if (recorder.state === "recording" && diff < context.state.ambDiff && context.audioProcessMonitor.count >= pauseThreshold){
+				context.audioProcessMonitor.count = 0
+				recorder.pause()
+				 console.log("auto pause")
+			}
+		}
 	}
 
 	function stopMonitoringForTakes(){
-		recorder.scriptProcessorNode.removeEventListener("audioprocess", audioProcessMonitor)
+		recorder.scriptProcessorNode.removeEventListener("audioprocess", this.audioProcessMonitor)
 	}
 
 	function receiveNewTake(data){
