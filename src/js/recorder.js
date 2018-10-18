@@ -72,7 +72,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 				div(
 					button({onClick: ()=>{
 						this.state.recording
-							? initiated && (recorder.stop(), stopMonitoringForTakes.call(this))
+							? (initiated && recorder.stop())
 							: recorder.start()
 					}},
 						monoButtonText(this.state)
@@ -91,7 +91,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		get recordingStopped(){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "ambDiff")
 			this.setState({recording: false})
-			return initiated ? nullFunction : ambiantSeekEnd
+			return initiated ? stopMonitoringForTakes : ambiantSeekEnd
 		}
 
 		get dataReceived(){
@@ -157,13 +157,12 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 
 		console.log(maxAvarage, minAvarage, diffAvarage, this)
 		recorder.start()
+		recorder.pause()
 	}
 
 	// this is the code to manage auto stopping and starting
 	function beginMonitoringForTakes(){
 		recorder.scriptProcessorNode.addEventListener("audioprocess", this.audioProcessMonitor)
-		recorder.pause()
-		console.log(this)
 	}
 
 	function audioProcessMonitor(e){
@@ -186,15 +185,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 
 
 		if (recorder.state !== "recording"){
-			if (diff > (context.state.ambDiff * 2)){
-				recorder.encoder.postMessage( Object.assign({
-			    	command: 'init',
-			    	originalSampleRate: recorder.audioContext.sampleRate,
-			    	wavSampleRate: recorder.audioContext.sampleRate
-			    }, recorder.config))
-				recorder.resume();
-				console.log("auto resume")
-			}
+			(diff > (context.state.ambDiff * 2)) && (recorder.resume(), console.log("auto resume"))
 		}
 		else{
 			if (diff < context.state.ambDiff && context.audioProcessMonitor.count < pauseThreshold){
@@ -206,9 +197,8 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			}
 			else if (recorder.state === "recording" && diff < context.state.ambDiff && context.audioProcessMonitor.count >= pauseThreshold){
 				context.audioProcessMonitor.count = 0
-				recorder.encoder.postMessage({command: "done"})
 				recorder.pause()
-				console.log("auto pause")
+				 console.log("auto pause")
 			}
 		}
 	}
