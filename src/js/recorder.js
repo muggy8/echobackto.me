@@ -67,7 +67,9 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 								workerPath,
 								lAvgDiff: this.state.recorder.lAvgDiff,
 								rAvgDiff: this.state.recorder.rAvgDiff
-							}).then((res)=>this.setState({recorder: res, recording: true}))
+							})
+							.then((res)=>this.setState({recorder: res, recording: true}))
+							.then(()=>setupRecorder(this.state.recorder, this))
 						}
 						else if (initiated){
 							this.state.recorder.end()
@@ -77,7 +79,9 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 						else{
 							awaitingRecorder = autoRecorder({
 								workerPath
-							}).then((res)=>this.setState({recorder: res, recording: true}))
+							})
+							.then((res)=>this.setState({recorder: res, recording: true}))
+							.then(()=>setupRecorder(this.state.recorder, this))
 						}
 						this.setState({waitingOn: awaitingRecorder})
 						awaitingRecorder.then(()=>this.setState(
@@ -114,6 +118,14 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		else if (initiated){
 			return "Stop Recording"
 		}
+	}
+
+	function setupRecorder(recorder, context = this){
+		recorder.onRecording = onNewRecording.bind(context)
+	}
+
+	function onNewRecording(e){
+		console.log("data:audio/ogg;base64," + arrayBufferToBase64(e.buffer))
 	}
 
 })(REP)
