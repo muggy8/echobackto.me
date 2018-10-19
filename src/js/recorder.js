@@ -11,6 +11,11 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 	}
 	var workerPath = "deps/chrome_ogg_encoder/ogg_encoder_worker.js"
 
+	function uuid(){return(""+1e7+-1e3+-4e3+-8e3+-1e11).replace(/1|0/g,function(){return(0|Math.random()*16).toString(16)})}
+
+
+
+
 	function nullFunction(){}
 
 	// ok here's the actual class that does stuff :3
@@ -19,6 +24,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			super(prop)
 			var context = this
 			context.state = prop.state
+			context.state.list = []
 		}
 
 		componentWillUnmount(){
@@ -97,6 +103,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 						monoButtonText(this.state)
 					)
 				),
+				React.createElement(App.Components.RecordingList, {list: this.state.list})
 			)
 		}
 	}
@@ -125,7 +132,13 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 	}
 
 	function onNewRecording(e){
-		console.log("data:audio/ogg;base64," + arrayBufferToBase64(e.buffer))
+		var audio = "data:audio/ogg;base64," + arrayBufferToBase64(e.buffer)
+		this.setState({
+			list: this.state.list.concat([{
+				audio,
+				id: uuid()
+			}])
+		})
 	}
 
 })(REP)
