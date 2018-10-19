@@ -10,7 +10,8 @@ App.Components.RecordingList = (function({ul, li, audio, a}){
 					audio({
 						autoPlay: true,
 						controls: true,
-						src: recording.audio
+						src: recording.audio,
+						onEnded: this.props.playbackComplete,
 					}),
 				))
 			)

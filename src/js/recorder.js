@@ -13,11 +13,6 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 
 	function uuid(){return(""+1e7+-1e3+-4e3+-8e3+-1e11).replace(/1|0/g,function(){return(0|Math.random()*16).toString(16)})}
 
-
-
-
-	function nullFunction(){}
-
 	// ok here's the actual class that does stuff :3
 	return class extends React.Component {
 		constructor(prop){
@@ -103,7 +98,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 						monoButtonText(this.state)
 					)
 				),
-				React.createElement(App.Components.RecordingList, {list: this.state.list})
+				React.createElement(App.Components.RecordingList, {list: this.state.list, playbackComplete: playbackComplete.bind(this)})
 			)
 		}
 	}
@@ -137,8 +132,13 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			list: this.state.list.concat([{
 				audio,
 				id: uuid()
-			}])
+			}]),
 		})
+		this.state.recorder.recordState = "playback"
+	}
+
+	function playbackComplete(){
+		this.state.recorder.recordState = "standby"
 	}
 
 })(REP)
