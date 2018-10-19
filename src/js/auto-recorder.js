@@ -32,20 +32,29 @@ var autoRecorder = (function(){
 		Object.assign(context, configs)
 		context.worker = new Worker(context.workerPath)
 		context.monitorAmbiant = monitorAmbiant.bind(context)
+		context.setAvarage = setAvarage.bind(context)
 		theActualOutput.monitorForRecording = monitorForRecording.bind(theActualOutput)
 		theActualOutput.recordState = "standby"
 		theActualOutput.offIterations = 0
 
-		context.lMaxSum = 0
-		context.lMaxCount = 0
-		context.lMinSum = 0
-		context.lMinCount = 0
-		context.lAvgDiff = undefined
-		context.rMaxSum = 0
-		context.rMaxCount = 0
-		context.rMinSum = 0
-		context.rMinCount = 0
-		context.rAvgDiff = undefined
+
+		initializeAvarageFinder: {
+
+			if (context.lAvgDiff && context.rAvgDiff){
+				break initializeAvarageFinder
+			}
+
+			context.lMaxSum = 0
+			context.lMaxCount = 0
+			context.lMinSum = 0
+			context.lMinCount = 0
+			context.lAvgDiff = undefined
+			context.rMaxSum = 0
+			context.rMaxCount = 0
+			context.rMinSum = 0
+			context.rMinCount = 0
+			context.rAvgDiff = undefined
+		}
 
 		return navigator.mediaDevices
 			.getUserMedia({ audio: true, video: false })
@@ -57,27 +66,34 @@ var autoRecorder = (function(){
 				context.source.connect(context.processor)
 				context.processor.connect(context.audioContext.destination)
 
+				if (context.lAvgDiff && context.rAvgDiff){
+					return
+				}
+
 				context.processor.addEventListener("audioprocess", context.monitorAmbiant)
 				return delay(3000)
 			}).then(function(){
 				context.processor.removeEventListener("audioprocess", context.monitorAmbiant)
 
-				context.lAvgDiff = (context.lMaxSum/context.lMaxCount) - (context.lMinSum/context.lMinCount)
-				context.rAvgDiff = (context.rMaxSum/context.rMaxCount) - (context.rMinSum/context.rMinCount)
+				resolveAvgDiff: {
+					if (context.lAvgDiff && context.rAvgDiff){
+						break resolveAvgDiff
+					}
 
-				delete context.lMaxSum
-				delete context.lMaxCount
-				delete context.lMinSum
-				delete context.lMinCount
-				delete context.rMaxSum
-				delete context.rMaxCount
-				delete context.rMinSum
-				delete context.rMinCount
+					context.lAvgDiff = (context.lMaxSum/context.lMaxCount) - (context.lMinSum/context.lMinCount)
+					context.rAvgDiff = (context.rMaxSum/context.rMaxCount) - (context.rMinSum/context.rMinCount)
+
+					delete context.lMaxSum
+					delete context.lMaxCount
+					delete context.lMinSum
+					delete context.lMinCount
+					delete context.rMaxSum
+					delete context.rMaxCount
+					delete context.rMinSum
+					delete context.rMinCount
+				}
 
 				context.processor.addEventListener("audioprocess", theActualOutput.monitorForRecording)
-
-
-				// context.end()
 				return theActualOutput
 			})
 	}
@@ -141,7 +157,10 @@ var autoRecorder = (function(){
 				context.offIterations = 0
 			}
 		}
+	}
 
-
+	function setAvarage(l, r){
+		this.lAvgDiff = l
+		this.rAvgDiff = f
 	}
 })()

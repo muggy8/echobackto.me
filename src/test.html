@@ -10,7 +10,9 @@
 		<script>
 		var recorder
 			autoRecorder({
-				workerPath: "deps/chrome_ogg_encoder/ogg_encoder_worker.js"
+				workerPath: "deps/chrome_ogg_encoder/ogg_encoder_worker.js",
+				lAvgDiff: 0.04373185127393927,
+				rAvgDiff: 0.04373185127393927,
 			}).then(function(res){
 				recorder = res
 			})
