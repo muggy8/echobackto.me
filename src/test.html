@@ -8,9 +8,12 @@
 		<!-- dependencies -->
 		<script src="js/auto-recorder.js"></script>
 		<script>
+		var recorder
 			autoRecorder({
 				workerPath: "deps/chrome_ogg_encoder/ogg_encoder_worker.js"
-			}).then(console.log)
+			}).then(function(res){
+				recorder = res
+			})
 		</script>
 	</body>
 
