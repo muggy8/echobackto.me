@@ -157,11 +157,11 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 
 		console.log(maxAvarage, minAvarage, diffAvarage, this)
 		recorder.start()
-		recorder.pause()
 	}
 
 	// this is the code to manage auto stopping and starting
 	function beginMonitoringForTakes(){
+		recorder.pause()
 		recorder.scriptProcessorNode.addEventListener("audioprocess", this.audioProcessMonitor)
 	}
 
