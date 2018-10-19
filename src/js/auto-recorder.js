@@ -16,6 +16,9 @@ var autoRecorder = (function(){
 				})
 			}
 			context.worker.terminate()
+		},
+		onRecording: function(){
+
 		}
 	}
 
@@ -94,6 +97,9 @@ var autoRecorder = (function(){
 				}
 
 				context.processor.addEventListener("audioprocess", theActualOutput.monitorForRecording)
+				context.worker.onmessage = function(e){
+					theActualOutput.onRecording(e.data)
+				}
 				return theActualOutput
 			})
 	}
@@ -142,9 +148,31 @@ var autoRecorder = (function(){
 			if (lAvgDiff > context.lAvgDiff * 1.5 && rAvgDiff > context.rAvgDiff * 1.5){
 				context.recordState = "recording"
 				console.log("recording")
+
+				// init the worker logic
+				context.worker.postMessage({
+					cmd: "init",
+					sampleRate: context.audioContext.sampleRate
+				})
+
+				// we want to init this tick too so we'll send it to the worker as well
+				context.worker.postMessage({
+					cmd: 'write',
+					leftData: e.inputBuffer.getChannelData(0),
+					rightData: e.inputBuffer.getChannelData(1),
+					samplesCount: e.inputBuffer.getChannelData(0).length
+				})
 			}
 		}
 		else if (context.recordState === "recording"){
+			// if it's recording we need to send the data to the worker first always
+			context.worker.postMessage({
+				cmd: 'write',
+				leftData: e.inputBuffer.getChannelData(0),
+				rightData: e.inputBuffer.getChannelData(1),
+				samplesCount: e.inputBuffer.getChannelData(0).length
+			})
+
 			if (lAvgDiff <= context.lAvgDiff && rAvgDiff <= context.rAvgDiff){
 				if (context.offIterations < context.stopItteration){
 					context.offIterations ++
@@ -152,6 +180,9 @@ var autoRecorder = (function(){
 					context.offIterations = 0
 					context.recordState = "standby"
 					console.log("stoped")
+
+					// alright it's all done lets end it
+					context.worker.postMessage({cmd: 'finish'});
 				}
 			} else if (lAvgDiff > context.lAvgDiff || rAvgDiff > context.rAvgDiff){
 				context.offIterations = 0
