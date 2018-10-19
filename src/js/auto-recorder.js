@@ -16,6 +16,7 @@ var autoRecorder = (function(){
 				})
 			}
 			context.worker.terminate()
+			context.recordState = "end"
 		},
 		onRecording: function(){
 
@@ -191,7 +192,7 @@ var autoRecorder = (function(){
 	}
 
 	function setAvarage(l, r){
-		this.lAvgDiff = l
-		this.rAvgDiff = f
+		l && (this.lAvgDiff = l)
+		r && (this.rAvgDiff = r)
 	}
 })()
