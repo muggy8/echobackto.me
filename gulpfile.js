@@ -7,47 +7,47 @@ const clean = require('gulp-clean')
 
 gulp.task("removePrevious", function(){
 	return gulp
-		.src("www/*")
+		.src("docs/*")
 		.pipe(clean())
 })
 
 gulp.task("move", ["removePrevious"], function(){
 	return gulp
 		.src(["src/**/*.js", "src/**/*.css", "src/**/*.html"])
-		.pipe(gulp.dest('www'))
+		.pipe(gulp.dest('docs'))
 })
 
 gulp.task("minifyCSS", ["move"], function(){
 	return gulp
-		.src('www/**/*.css')
+		.src('docs/**/*.css')
 		.pipe(cleanCSS())
-		.pipe(gulp.dest('www'))
+		.pipe(gulp.dest('docs'))
 })
 
 gulp.task("minifyJS", ["minifyCSS"], function(){
 	return gulp
-		.src('www/**/*.js')
+		.src('docs/**/*.js')
 	    .pipe(minify({
 			ext: {
 	            src:'.src.js',
 	            min:'.js',
 	        },
 		}))
-	    .pipe(gulp.dest('www'))
+	    .pipe(gulp.dest('docs'))
 })
 
 gulp.task("minifyHTML", ["minifyJS"], function(){
 	return gulp
-		.src('www/**/*.html')
+		.src('docs/**/*.html')
 	    .pipe(htmlmin({collapseWhitespace: true}))
-	    .pipe(gulp.dest('www'))
+	    .pipe(gulp.dest('docs'))
 })
 
 gulp.task("hash", ["minifyHTML"],  function(){
 	return gulp
-		.src(["www/**/*.*", "!www/**/*.src.js"])
+		.src(["docs/**/*.*", "!docs/**/*.src.js"])
 		.pipe(hashsum({
-			dest: "www",
+			dest: "docs",
 			json: true,
 			filename: "assets.json"
 		}));
