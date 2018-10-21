@@ -7,7 +7,7 @@ const clean = require('gulp-clean')
 
 gulp.task("removePrevious", function(){
 	return gulp
-		.src("www/**/*")
+		.src("www/*")
 		.pipe(clean())
 })
 
