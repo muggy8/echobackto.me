@@ -24,8 +24,8 @@
     "promise-fs": "^2.0.1"
   },
   "cdn": {
-    "react": "https://unpkg.com/react@16.5.2/umd/react.production.min.js",
-    "react-dom": "https://unpkg.com/react-dom@16.5.2/umd/react-dom.production.min.js",
-    "REP": "https://cdn.jsdelivr.net/gh/muggy8/react-elements-proxy@1511f6150563c037f351c58ce564aef0c4529430/rep.js"
+    "https://unpkg.com/react@16.5.2/umd/react.production.min.js": "react",
+    "https://unpkg.com/react-dom@16.5.2/umd/react-dom.production.min.js": "react-dom",
+    "https://cdn.jsdelivr.net/gh/muggy8/react-elements-proxy@1511f6150563c037f351c58ce564aef0c4529430/rep.js": "REP"
   }
 }
