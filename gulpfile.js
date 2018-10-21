@@ -19,7 +19,12 @@ gulp.task("minifyCSS", ["move"], function(){
 gulp.task("minifyJS", ["minifyCSS"], function(){
 	return gulp
 		.src('www/**/*.js')
-	    .pipe(minify())
+	    .pipe(minify({
+			ext: {
+	            src:'.src.js',
+	            min:'.js',
+	        },
+		}))
 	    .pipe(gulp.dest('www'))
 })
 
