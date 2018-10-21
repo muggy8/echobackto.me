@@ -2,7 +2,7 @@
   "name": "echobackto.me",
   "version": "0.0.1",
   "description": "Hands free recording and echoing app",
-  "main": "index.html",
+  "main": "www/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
