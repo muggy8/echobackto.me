@@ -23,7 +23,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 		}
 
 		componentWillUnmount(){
-			this.state.recorder.end()
+			this.state.recorder && this.state.recorder.end()
 		}
 
 		render(){

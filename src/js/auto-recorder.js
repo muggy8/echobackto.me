@@ -3,6 +3,9 @@ var autoRecorder = (function(){
 		workerPath: "ogg_encoder_worker.js",
 		stopItteration: 10,
 		end: function(){
+			if (context.recordState === "end"){
+				return
+			}
 			var context = this
 			context.processor.disconnect()
 			context.source.disconnect()
