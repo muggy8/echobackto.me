@@ -2,6 +2,7 @@ const gulp = require("gulp")
 const minify = require('gulp-minify')
 const cleanCSS = require('gulp-clean-css')
 const htmlmin = require('gulp-htmlmin')
+const hashsum = require("gulp-hashsum")
 
 gulp.task("move", function(){
 	return gulp
@@ -36,7 +37,13 @@ gulp.task("minifyHTML", ["minifyJS"], function(){
 })
 
 gulp.task("hash", ["minifyHTML"],  function(){
-
+	return gulp
+		.src(["www/**/*.*", "!www/**/*.src.js"])
+		.pipe(hashsum({
+			dest: "www",
+			json: true,
+			filename: "assets.json"
+		}));
 })
 
 gulp.task("default", ["hash"], async function(){
