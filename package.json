@@ -12,5 +12,8 @@
     "Web"
   ],
   "author": "Muggy Ate",
-  "license": "UNLICENCED"
+  "license": "UNLICENCED",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
 }
