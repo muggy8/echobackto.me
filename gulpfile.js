@@ -39,7 +39,7 @@ gulp.task("minifyJS", ["minifyCSS"], function(){
 
 gulp.task("changeToDeploymentAssets", ["minifyJS"], function(){
 	return gulp
-		.src("index.html")
+		.src("docs/index.html")
 		.pipe(replace(".development.js", ".production.min.js"))
 		.pipe(gulp.dest('docs'))
 })
