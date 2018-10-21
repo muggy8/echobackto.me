@@ -37,21 +37,22 @@ gulp.task("minifyJS", ["minifyCSS"], function(){
 	    .pipe(gulp.dest('docs'))
 })
 
-gulp.task("minifyHTML", ["minifyJS"], function(){
-	return gulp
-		.src('docs/**/*.html')
-	    .pipe(htmlmin({collapseWhitespace: true}))
-	    .pipe(gulp.dest('docs'))
-})
-
-gulp.task("deploymentAssets", ["minifyHTML"], function(){
+gulp.task("changeToDeploymentAssets", ["minifyJS"], function(){
 	return gulp
 		.src("index.html")
 		.pipe(replace(".development.js", ".production.min.js"))
 		.pipe(gulp.dest('docs'))
 })
 
-gulp.task("hash", ["deploymentAssets"],  function(){
+gulp.task("minifyHTML", ["changeToDeploymentAssets"], function(){
+	return gulp
+		.src('docs/**/*.html')
+	    .pipe(htmlmin({collapseWhitespace: true}))
+	    .pipe(gulp.dest('docs'))
+})
+
+
+gulp.task("hash", ["minifyHTML"],  function(){
 	return gulp
 		.src(["docs/**/*.*", "!docs/**/*.src.js"])
 		.pipe(hashsum({
