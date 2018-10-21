@@ -11,7 +11,7 @@ gulp.task("removePrevious", function(){
 		.pipe(clean())
 })
 
-gulp.task("move", function(){
+gulp.task("move", ["removePrevious"], function(){
 	return gulp
 		.src(["src/**/*.js", "src/**/*.css", "src/**/*.html"])
 		.pipe(gulp.dest('www'))
