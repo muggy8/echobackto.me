@@ -151,7 +151,6 @@ var autoRecorder = (function(){
 		if (context.recordState === "standby"){
 			if (lAvgDiff > context.lAvgDiff * 1.5 && rAvgDiff > context.rAvgDiff * 1.5){
 				context.recordState = "recording"
-				console.log("recording")
 
 				// init the worker logic
 				context.worker.postMessage({
@@ -183,7 +182,6 @@ var autoRecorder = (function(){
 				} else {
 					context.offIterations = 0
 					context.recordState = "standby"
-					console.log("stoped")
 
 					// alright it's all done lets end it
 					context.worker.postMessage({cmd: 'finish'});
