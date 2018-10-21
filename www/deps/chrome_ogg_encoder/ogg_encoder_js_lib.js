@@ -1,0 +1,1 @@
+mergeInto(LibraryManager.library,{write_data:function(a,r){self.do_write_data(a,r)}});
