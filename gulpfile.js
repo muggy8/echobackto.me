@@ -1,10 +1,11 @@
-const gulp = require("gulp")
+const gulp = require('gulp')
 const minify = require('gulp-minify')
 const cleanCSS = require('gulp-clean-css')
 const htmlmin = require('gulp-htmlmin')
-const hashsum = require("gulp-hashsum")
+const hashsum = require('gulp-hashsum')
 const clean = require('gulp-clean')
 const replace = require('gulp-replace')
+const fs = require('promise-fs')
 
 gulp.task("removePrevious", function(){
 	return gulp
@@ -63,5 +64,12 @@ gulp.task("hash", ["minifyHTML"],  function(){
 })
 
 gulp.task("default", ["hash"], async function(){
+	// now we do clean up stuff
+	let compiledAssets = await fs.readFile("docs/assets.json")
+	compiledAssets = JSON.parse(compiledAssets)
+	let packageJson = await fs.readFile("package.json")
+	packageJson = JSON.parse(packageJson)
 
+	Object.assign(compiledAssets, packageJson.cdn)
+	return fs.writeFile("docs/assets.json", JSON.stringify(compiledAssets))
 })
