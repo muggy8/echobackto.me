@@ -13,7 +13,7 @@ App.Components.RecordingList = (function({ul, li, audio, a}){
 						src: recording.audio,
 						onEnded: this.props.playbackComplete,
 					}),
-				))
+				)).reverse()
 			)
 		}
 	}

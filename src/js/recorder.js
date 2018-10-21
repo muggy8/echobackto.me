@@ -30,42 +30,44 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "recorder")
 			return div({className: "content"},
 				div(
-					div("Ambiant Noise Level: "),
-					div(
-						div({className: "amb-ctrl"},
-							span("Left: "),
-							input({
-								value: this.state.newLAvgDiff || (this.state.recorder && this.state.recorder.lAvgDiff) || "",
-								type: "number",
-								min: 0,
-								max: 1,
-								onChange: (ev)=>this.setState({newLAvgDiff: ev.target.value}),
-								disabled: !initiated ? "disabled" : undefined,
-								placeholder: "Ambient L"
-							}),
-						),
-						div({className: "amb-ctrl"},
-							span("Right: "),
-							input({
-								value: this.state.newRAvgDiff || (this.state.recorder && this.state.recorder.rAvgDiff) || "",
-								type: "number",
-								min: 0,
-								max: 1,
-								onChange: (ev)=>this.setState({newRAvgDiff: ev.target.value}),
-								disabled: !initiated ? "disabled" : undefined,
-								placeholder: "Ambient R"
-							}),
+					div("Ambiant Noise Levels "),
+					div({className: "flex hcenter island"},
+						div({className: "flex-responsive vhcenter text-right"},
+							div({className: "cell-h"},
+								span("Left: "),
+								input({
+									value: this.state.newLAvgDiff || (this.state.recorder && this.state.recorder.lAvgDiff) || "",
+									type: "number",
+									min: 0,
+									max: 1,
+									onChange: (ev)=>this.setState({newLAvgDiff: ev.target.value}),
+									disabled: !initiated ? "disabled" : undefined,
+									placeholder: "Ambient L"
+								}),
+							),
+							div({className: "cell-h"},
+								span("Right: "),
+								input({
+									value: this.state.newRAvgDiff || (this.state.recorder && this.state.recorder.rAvgDiff) || "",
+									type: "number",
+									min: 0,
+									max: 1,
+									onChange: (ev)=>this.setState({newRAvgDiff: ev.target.value}),
+									disabled: !initiated ? "disabled" : undefined,
+									placeholder: "Ambient R"
+								}),
+							),
 						),
 						initiated
 							? button({onClick: ()=>this.setState({
 								newLAvgDiff: this.state.recorder.setAvarage(this.state.newLAvgDiff, this.state.newRAvgDiff),
 								newRAvgDiff: undefined,
-							})}, "Update")
+							}), className: "island-h"}, "Update")
 							: null
 					),
 				),
 				div(
-					button({onClick: ()=>{
+					button({className: "fs-1.5em", onClick: ()=>{
 						var awaitingRecorder
 						if (initiated && this.state.recorder.recordState === "end"){
 							awaitingRecorder = autoRecorder({
