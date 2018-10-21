@@ -1,6 +1,2 @@
-.ftpconfig
-index.html
-index.js
-version.json
-version
-version/*
+*.zip
+node_modules/*

@@ -1,0 +1,26 @@
+{
+  "name": "echobackto.me",
+  "version": "0.0.1",
+  "description": "Hands free recording and echoing app",
+  "main": "www/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "React",
+    "App",
+    "Web"
+  ],
+  "author": "Muggy Ate",
+  "license": "UNLICENCED",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^3.10.0",
+    "gulp-hashsum": "^1.2.0",
+    "gulp-minify": "^3.1.0"
+  },
+  "dependencies": {
+    "gulp-htmlmin": "^5.0.1"
+  }
+}
