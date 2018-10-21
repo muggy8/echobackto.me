@@ -4,6 +4,7 @@ const cleanCSS = require('gulp-clean-css')
 const htmlmin = require('gulp-htmlmin')
 const hashsum = require("gulp-hashsum")
 const clean = require('gulp-clean')
+const replace = require('gulp-replace')
 
 gulp.task("removePrevious", function(){
 	return gulp
@@ -43,7 +44,13 @@ gulp.task("minifyHTML", ["minifyJS"], function(){
 	    .pipe(gulp.dest('docs'))
 })
 
-gulp.task("hash", ["minifyHTML"],  function(){
+gulp.task("deploymentAssets", ["minifyHTML"], function(){
+	return gulp
+		.src("index.html")
+		.pipe(replace("development.js", "production.min.js"))
+})
+
+gulp.task("hash", ["deploymentAssets"],  function(){
 	return gulp
 		.src(["docs/**/*.*", "!docs/**/*.src.js"])
 		.pipe(hashsum({
