@@ -47,7 +47,7 @@ gulp.task("minifyHTML", ["minifyJS"], function(){
 gulp.task("deploymentAssets", ["minifyHTML"], function(){
 	return gulp
 		.src("index.html")
-		.pipe(replace("development.js", "production.min.js"))
+		.pipe(replace(".development.js", ".production.min.js"))
 		.pipe(gulp.dest('docs'))
 })
 
