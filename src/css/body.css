@@ -42,14 +42,16 @@ nav > a{
 nav > a.active{
     opacity: 1;
 }
-button{
+button, [role="button"]{
 	background-color: #FFF;
-	border-radius: 0.25em;
+	border-radius: 1em;
 	border: none;
 	padding: 0.25em;
 	color: #A002EB;
-	box-shadow: 0 0 0.5em 0 #FFF;
+	box-shadow: inset 0 0 0.5em 0 #DDD;
 	cursor: pointer;
+	text-decoration: none;
+	font-size: 1em;
 }
 
 .fs-1\.25em{
@@ -113,6 +115,9 @@ button{
 .island-h{
 	margin-left: 0.5em;
 	margin-right: 0.5em;
+}
+ul.list{
+	padding: 0;
 }
 
 @media (min-width: 42em) {
