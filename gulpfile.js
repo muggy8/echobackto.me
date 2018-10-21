@@ -3,6 +3,13 @@ const minify = require('gulp-minify')
 const cleanCSS = require('gulp-clean-css')
 const htmlmin = require('gulp-htmlmin')
 const hashsum = require("gulp-hashsum")
+const clean = require('gulp-clean')
+
+gulp.task("removePrevious", function(){
+	return gulp
+		.src("www/**/*")
+		.pipe(clean())
+})
 
 gulp.task("move", function(){
 	return gulp
