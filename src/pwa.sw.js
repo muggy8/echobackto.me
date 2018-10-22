@@ -8,14 +8,14 @@ const cacheName = "assets"
 
 async function installAssets(){
 	const storage = await caches.open(cacheName)
-	const assetList = await fetch("/assets.json").then(res=>res.json()).catch(()=>{return {}})
+	const remoteAssetList = await fetch("/assets.json").then(res=>res.json()).catch(()=>{return {}})
 	const cachedAssetList = await storage.match("/assets.json").then(res=>res ? res.json() : {})
 
 	// lets find out which paths we need to update
 	let updateList = {}
-	for(let key in assetList){
-		if (cachedAssetList[key] !== assetList[key]){
-			updateList[key] = assetList[key]
+	for(let key in remoteAssetList){
+		if (cachedAssetList[key] !== remoteAssetList[key]){
+			updateList[key] = remoteAssetList[key]
 		}
 	}
 	let requests = []
@@ -26,7 +26,21 @@ async function installAssets(){
 		let request = fetchAndStoreRequest(url, storage)
 		requests.push(request)
 	}
-	console.log("assets updated")
+
+    let toDelete = []
+    for(let key in cachedAssetList){
+        if (!remoteAssetList[key]){
+            let url = absoluteAssetRegex.test(key) ? key : "/" + key
+            toDelete.push[url]
+        }
+    }
+
+    for(let url of toDelete){
+        let deleteOpp = storage.delete(url)
+        requests.push(deleteOpp)
+    }
+
+	console.log(storage, await storage.keys())
 	return installAssets.ready = Promise.all(requests)
 }
 installAssets.ready = Promise.resolve()
