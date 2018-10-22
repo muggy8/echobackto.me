@@ -1,3 +1,8 @@
+/*
+	The goal of this service worker is to cache all assets but each time the user navigates to somewhere else (namely open or refresh the app) the service worker will fetch the current version of the app's assets list which is built by the gulp process and then cache them for offline use. when the app is being called, it would effectively use a strategy of cache first and fall back to network if asset not found in cache
+*/
+
+
 const absoluteAssetRegex = /^(https?:)?\//
 const cacheName = "assets"
 
@@ -37,6 +42,7 @@ async function installAssets(){
 
 		requests.push(request)
 	}
+	console.log("assets updated")
 	return installAssets.ready = Promise.all(requests)
 }
 installAssets.ready = Promise.resolve()
