@@ -1,6 +1,6 @@
 const App = (function({div, h1, nav, a}){
 	// lets do some good old fassioned dependency injection the angular way cuz why the heck not
-    let components = {}
+	let components = {}
 	let constants = {
 		homeRout: /^\/$/,
 		aboutRout: /^\/about$/,
@@ -62,12 +62,12 @@ const App = (function({div, h1, nav, a}){
 			)
 		}
 
-        static get Components(){
-            return components
-        }
+		static get Components(){
+			return components
+		}
 
-        static get Constants(){
-            return constants
-        }
+		static get Constants(){
+			return constants
+		}
 	}
 })(REP)
