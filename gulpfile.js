@@ -37,7 +37,10 @@ gulp.task("minifyCSS", ["move"], function(){
 
 gulp.task("minifyJS", ["minifyCSS"], function(){
 	return gulp
-		.src('docs/**/*.js')
+		.src([
+			'docs/**/*.js',
+			'!docs/deps/**/*.js',
+		])
 	    .pipe(minify({
 			ext: {
 	            src:'.src.js',
