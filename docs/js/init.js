@@ -1,1 +1,1 @@
-ReactDOM.render(React.createElement(App),document.getElementById("root")),"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js")});
+ReactDOM.render(React.createElement(App),document.getElementById("root")),"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("pwa.sw.js")});
