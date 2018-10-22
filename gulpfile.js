@@ -15,7 +15,14 @@ gulp.task("removePrevious", function(){
 
 gulp.task("move", ["removePrevious"], function(){
 	return gulp
-		.src(["src/**/*.js", "src/**/*.css", "src/**/*.html"])
+		.src([
+			"src/**/*.js",
+			"src/**/*.css",
+			"src/**/*.html",
+			"src/**/*.json",
+			"src/**/*.png",
+			"src/**/*.ico"
+		])
 		.pipe(gulp.dest('docs'))
 })
 
@@ -55,7 +62,7 @@ gulp.task("minifyHTML", ["changeToDeploymentAssets"], function(){
 
 gulp.task("hash", ["minifyHTML"],  function(){
 	return gulp
-		.src(["docs/**/*.*", "!docs/**/*.src.js"])
+		.src(["docs/**/*.*", "!docs/**/*.src.js", "!docs/**/*.sw.js"])
 		.pipe(hashsum({
 			dest: "docs",
 			json: true,
