@@ -69,6 +69,7 @@ gulp.task("default", ["hash"], async function(){
 	compiledAssets = JSON.parse(compiledAssets)
 	let packageJson = await fs.readFile("package.json")
 	packageJson = JSON.parse(packageJson)
+	compiledAssets["/"] = compiledAssets["index.html"]
 
 	Object.assign(compiledAssets, packageJson.cdn)
 	return fs.writeFile("docs/assets.json", JSON.stringify(compiledAssets))
