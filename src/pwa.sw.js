@@ -9,7 +9,7 @@ const cacheName = "assets"
 async function installAssets(){
 	const storage = await caches.open(cacheName)
 	const assetList = await fetch("/assets.json").then(res=>res.json())
-	const cachedAssetList = await storage.match("/assets.json").then(res=>res.json())
+	const cachedAssetList = await storage.match("/assets.json").then(res=>res ? res.json() : {})
 
 	// lets find out which paths we need to update
 	let updateList = {}
@@ -33,7 +33,7 @@ installAssets.ready = Promise.resolve()
 
 async function fetchAndStoreRequest(req, storage){
 	let res = await fetch(req)
-	await storage.put(ev.request, res.clone())
+	await storage.put(req, res.clone())
 	return res
 }
 
@@ -55,8 +55,6 @@ self.addEventListener("fetch", function(ev){
 				.then(async ()=>{
 					let storage = await caches.open(cacheName)
 					let cachedAsset = await storage.match(ev.request)
-
-					console.log(ev.request, cachedAsset)
 
 					if (cachedAsset){
 						return cachedAsset
