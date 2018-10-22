@@ -8,44 +8,34 @@ const cacheName = "assets"
 
 async function installAssets(){
 	const storage = await caches.open(cacheName)
-	const assetList = await fetch("assets.json").then(res=>res.json())
+	const assetList = await fetch("/assets.json").then(res=>res.json())
+	const cachedAssetList = await storage.match("/assets.json").then(res=>res ? res.json() : {})
+
+	// lets find out which paths we need to update
+	let updateList = {}
+	for(let key in assetList){
+		if (cachedAssetList[key] !== assetList[key]){
+			updateList[key] = assetList[key]
+		}
+	}
 	let requests = []
 
-	// loop over all assets that were received and create a cache if need be
-	for(let key in assetList){
+	// loop over all assets that needs to be updated and update them
+	for(let key in updateList){
 		let url = absoluteAssetRegex.test(key) ? key : "/" + key
-		let version = assetList[key]
-
-		var request = storage.match(url) // do not use async await here cuz it's inside a for loop which we dont want to pause so the requests can run concurently
-			.then(async function(cachedAsset){ // we can use async await here cuz this is in a callback so we can do whatever since the primary request has been initiated already
-				if (cachedAsset && cachedAsset.headers.get("X-version") === version){return cachedAsset}
-
-				let remoteAsset = await fetch(url)
-
-				// because the responce is immuteable, we will create a clone of the responce and a version header to it
-				let remoteAssetText = await remoteAsset.text()
-				let copiedHeaders = {}
-				for(let pair of remoteAsset.headers.entries()){
-					copiedHeaders[pair[0]] = pair[1]
-				}
-				copiedHeaders["X-version"] = version
-
-				let cachableResponce = new Response(remoteAssetText, {
-					status: remoteAsset.status,
-					statusText: remoteAsset.statusText,
-					headers: copiedHeaders,
-					redirected: remoteAsset.redirected,
-					ok: remoteAsset.ok,
-				})
-				storage.put(url, cachableResponce)
-			})
-
+		let request = fetchAndStoreRequest(url, storage)
 		requests.push(request)
 	}
 	console.log("assets updated")
 	return installAssets.ready = Promise.all(requests)
 }
 installAssets.ready = Promise.resolve()
+
+async function fetchAndStoreRequest(req, storage){
+	let res = await fetch(req)
+	await storage.put(req, res.clone())
+	return res
+}
 
 self.addEventListener("install", function(ev){
 	ev.waitUntil(installAssets())
@@ -70,9 +60,7 @@ self.addEventListener("fetch", function(ev){
 						return cachedAsset
 					}
 					else{
-						let res = await fetch(ev.request)
-						await storage.put(ev.request, res.clone())
-						return res
+						return fetchAndStoreRequest(ev.request, storage)
 					}
 				})
 		)
