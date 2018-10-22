@@ -8,7 +8,7 @@ const cacheName = "assets"
 
 async function installAssets(){
 	const storage = await caches.open(cacheName)
-	const assetList = await fetch("/assets.json").then(res=>res.json())
+	const assetList = await fetch("/assets.json").then(res=>res.json()).catch(()=>{return {}})
 	const cachedAssetList = await storage.match("/assets.json").then(res=>res ? res.json() : {})
 
 	// lets find out which paths we need to update
