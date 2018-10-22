@@ -44,25 +44,20 @@ self.addEventListener("install", function(ev){
 self.addEventListener("fetch", function(ev){
 	if (ev.request.mode === "navigate"){
 		installAssets()
-		ev.respondWith(
-			caches.open(cacheName)
-				.then(storage=>storage.match(ev.request))
-		)
 	}
-	else{
-		ev.respondWith(
-			installAssets.ready
-				.then(async ()=>{
-					let storage = await caches.open(cacheName)
-					let cachedAsset = await storage.match(ev.request)
 
-					if (cachedAsset){
-						return cachedAsset
-					}
-					else{
-						return fetchAndStoreRequest(ev.request, storage)
-					}
-				})
-		)
-	}
+	ev.respondWith(
+		installAssets.ready
+			.then(async ()=>{
+				let storage = await caches.open(cacheName)
+				let cachedAsset = await storage.match(ev.request)
+
+				if (cachedAsset){
+					return cachedAsset
+				}
+				else{
+					return fetchAndStoreRequest(ev.request, storage)
+				}
+			})
+	)
 })
