@@ -69,7 +69,7 @@ var autoRecorder = (function(){
 				context.stream = stream
 				context.audioContext = new AudioContext(stream)
 				context.source = context.audioContext.createMediaStreamSource(stream)
-    			context.processor = context.audioContext.createScriptProcessor(4096, 2, 2)
+				context.processor = context.audioContext.createScriptProcessor(4096, 2, 2)
 				context.source.connect(context.processor)
 				context.processor.connect(context.audioContext.destination)
 
