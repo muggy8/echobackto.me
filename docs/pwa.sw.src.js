@@ -36,10 +36,8 @@ async function installAssets(){
 		}
 	}
 
-	console.log(toDelete, remoteAssetList, cachedAssetList)
 	for(let url of toDelete){
 		let deleteOpp = storage.delete(url)
-		console.log(deleteOpp)
 		requests.push(deleteOpp)
 	}
 
@@ -47,7 +45,6 @@ async function installAssets(){
 		storage.put("/assets.json", remoteAssetListRes)
 	)
 
-	console.log(storage, await storage.keys())
 	return installAssets.ready = Promise.all(requests)
 }
 installAssets.ready = Promise.resolve()
