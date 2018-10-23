@@ -8,7 +8,7 @@ const cacheName = "assets"
 
 async function installAssets(){
 	const storage = await caches.open(cacheName)
-    const remoteAssetListRes = await fetch("/assets.json")
+	const remoteAssetListRes = await fetch("/assets.json")
 	const remoteAssetList = await remoteAssetListRes.clone().json().catch(()=>{return {}})
 	const cachedAssetList = await storage.match("/assets.json").then(res=>res ? res.json() : {})
 
@@ -28,24 +28,24 @@ async function installAssets(){
 		requests.push(request)
 	}
 
-    let toDelete = []
-    for(let key in cachedAssetList){
-        if (!remoteAssetList.hasOwnProperty(key)){
-            let url = absoluteAssetRegex.test(key) ? key : ("/" + key)
-            ;toDelete.push(url)
-        }
-    }
+	let toDelete = []
+	for(let key in cachedAssetList){
+		if (!remoteAssetList.hasOwnProperty(key)){
+			let url = absoluteAssetRegex.test(key) ? key : ("/" + key)
+			;toDelete.push(url)
+		}
+	}
 
-    console.log(toDelete, remoteAssetList, cachedAssetList)
-    for(let url of toDelete){
-        let deleteOpp = storage.delete(url)
-        console.log(deleteOpp)
-        requests.push(deleteOpp)
-    }
+	console.log(toDelete, remoteAssetList, cachedAssetList)
+	for(let url of toDelete){
+		let deleteOpp = storage.delete(url)
+		console.log(deleteOpp)
+		requests.push(deleteOpp)
+	}
 
-    requests.push(
-        storage.put("/assets.json", remoteAssetListRes)
-    )
+	requests.push(
+		storage.put("/assets.json", remoteAssetListRes)
+	)
 
 	console.log(storage, await storage.keys())
 	return installAssets.ready = Promise.all(requests)

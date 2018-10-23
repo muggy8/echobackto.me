@@ -30,7 +30,7 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 			var initiated = Object.prototype.hasOwnProperty.call(this.state, "recorder")
 			return div({className: "content"},
 				div(
-					div("Ambiant Noise Levels "),
+					div("Ambient Noise Levels "),
 					div({className: "flex hcenter island"},
 						div({className: "flex-responsive vhcenter text-right"},
 							div({className: "cell-h"},
@@ -42,7 +42,8 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 									max: 1,
 									onChange: (ev)=>this.setState({newLAvgDiff: ev.target.value}),
 									disabled: !initiated ? "disabled" : undefined,
-									placeholder: "Ambient L"
+									placeholder: "Ambient L",
+									size: 5,
 								}),
 							),
 							div({className: "cell-h"},
@@ -54,7 +55,8 @@ App.Components.Recorder = (function({div, label, button, input, span}){
 									max: 1,
 									onChange: (ev)=>this.setState({newRAvgDiff: ev.target.value}),
 									disabled: !initiated ? "disabled" : undefined,
-									placeholder: "Ambient R"
+									placeholder: "Ambient R",
+									size: 5,
 								}),
 							),
 						),
