@@ -1,2 +1,4 @@
 *.zip
 node_modules/*
+*.src.js
+docs/CNAME
